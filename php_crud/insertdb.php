@@ -24,18 +24,19 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $sql = "INSERT INTO $db ($keyString) VALUES ($valueString)";
     // Debug
     // echo $sql; exit;
-
     $query = mysqli_query($conn, $sql);
 
     if ($query) {
-        
-        header("Location : '".$db."'".".php");
-
+        echo "<script>
+            alert('Data inserted successfully!');
+            window.location.href = '$db.php';
+        </script>";
     } else {
         echo "<script>
             alert('Error: " . mysqli_error($conn) . "');
-            window.location.href = $db.'.php';
+            window.location.href = '$db.php';
         </script>";
     }
+
 }
 ?>

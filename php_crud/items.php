@@ -19,54 +19,34 @@
               <th>Category</th>
               <th>Price</th>
               <th>Stock Qty</th>
-              <th>Remarks</th>
               <th>Status</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td><img src="https://via.placeholder.com/50" class="rounded" alt="item"></td>
-              <td>Pizza</td>
-              <td>Food</td>
-              <td>₹199.00</td>
-              <td>50</td>
-              <td>Cheese Burst</td>
-              <td><span class="badge bg-success">Active</span></td>
-              <td>
-                <button class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i></button>
-                <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
-              </td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td><img src="https://via.placeholder.com/50" class="rounded" alt="item"></td>
-              <td>Burger</td>
-              <td>Food</td>
-              <td>₹99.00</td>
-              <td>120</td>
-              <td>Veg Loaded</td>
-              <td><span class="badge bg-secondary">Inactive</span></td>
-              <td>
-                <button class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i></button>
-                <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
-              </td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td><img src="https://via.placeholder.com/50" class="rounded" alt="item"></td>
-              <td>Pasta</td>
-              <td>Food</td>
-              <td>₹149.00</td>
-              <td>75</td>
-              <td>White Sauce</td>
-              <td><span class="badge bg-success">Active</span></td>
-              <td>
-                <button class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i></button>
-                <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
-              </td>
-            </tr>
+            <?php 
+              $sql = "SELECT * from items";
+              $query = mysqli_query($conn,$sql);
+              while($row = mysqli_fetch_assoc($query)){
+                // debug($row);
+                ?>
+                  <tr>
+                    <td><?php echo $row['id'] ?></td>
+                    <td><img src="files/food.jpg" width="80px" class="rounded" alt="item"></td>
+                    <td><?php echo $row['name'] ?></td>
+                    <td><?php echo $row['category'] ?></td>
+                    <td>₹<?php echo $row['price'] ?></td>
+                    <td><?php echo $row['stockqty'] ?></td>
+                    <td><span class="badge bg-success">Active</span></td>
+                    <td>
+                      <button class="btn btn-sm btn-warning"><a href="edit_items.php?id=<?php echo $row['id']; ?>"><i class="bi bi-pencil-square"></i></a></button>
+                      <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+                    </td>
+                  </tr>
+                <?php
+              }
+              // exit;
+            ?>
           </tbody>
         </table>
       </div>

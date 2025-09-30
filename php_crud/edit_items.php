@@ -1,17 +1,23 @@
 <?php 
+include 'includes/nav.php';
+$pid = $_GET['id'];
 
-include 'includes/nav.php'; 
+$sql = "SELECT * FROM items where id = $pid";
+$query = mysqli_query($conn,$sql);
+$row = mysqli_fetch_assoc($query);
+
+
+// debug($row);
+// exit;
 
 ?>
-
   <!-- Main Content -->
   <div class="container my-4 flex-grow-1">
     <h1 class="mb-4">Manage Items</h1>
-
     <!-- Add Item Form -->
     <div class="card shadow-sm border-0 mb-4">
       <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center p-2">
-        <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Add New Item</h5>
+        <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Update Item</h5>
         <a href="items.php" class="btn btn-dark float-right">Back</a>
       </div>
       <div class="card-body">
@@ -20,19 +26,19 @@ include 'includes/nav.php';
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label">Item Name</label>
-              <input type="text" name="name" class="form-control" required>
+              <input type="text" name="name" value="<?php echo $row['name']; ?>" class="form-control" required>
             </div>
             <div class="col-md-6">
               <label class="form-label">Category</label>
-              <input type="text" name="category" class="form-control" required>
+              <input type="text" name="category" value="<?php echo $row['category']; ?>" class="form-control" required>
             </div>
             <div class="col-md-3">
               <label class="form-label">Price</label>
-              <input type="number" name="price" step="0.01" class="form-control" required>
+              <input type="number" name="price" value="<?php echo $row['price']; ?>" step="0.01" class="form-control" required>
             </div>
             <div class="col-md-3">
               <label class="form-label">Stock Qty</label>
-              <input type="number" name="stockqty" class="form-control" required>
+              <input type="number" value="<?php echo $row['stockqty']; ?>" name="stockqty" class="form-control" required>
             </div>
             <div class="col-md-6">
               <label class="form-label">Image</label>
@@ -40,7 +46,7 @@ include 'includes/nav.php';
             </div>
             <div class="col-md-12">
               <label class="form-label">Remarks</label>
-              <textarea name="remarks" class="form-control" rows="3"></textarea>
+              <textarea name="remarks" class="form-control" rows="3"><?php echo $row['remarks']; ?></textarea>
             </div>
             <div class="col-md-4">
               <label class="form-label">Status</label>
