@@ -23,7 +23,7 @@
            $_SESSION['user'] = $row;
             echo "<script>
               alert('Login Successfully');
-              location.href = 'userdashboard.php';
+              location.href = 'index.php';
           </script>";
         }
        

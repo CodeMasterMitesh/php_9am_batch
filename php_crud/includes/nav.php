@@ -1,11 +1,11 @@
  <?php
-    include 'config/connection.php';
-    if(!$_SESSION['admin']){
-        echo "<script>
-        alert('Unauthorized');
-        location.href = '404.php';
-        </script>";
-    }
+    // include 'config/connection.php';
+    // if(!$_SESSION['admin']){
+    //     echo "<script>
+    //     alert('Unauthorized');
+    //     location.href = '404.php';
+    //     </script>";
+    // }
 ?>
 <!DOCTYPE html>
 <html lang="en">
