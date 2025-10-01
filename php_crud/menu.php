@@ -1,7 +1,5 @@
 <?php
     include 'config/connection.php';
-    // debug($_SESSION);
-    // exit;
     if(!$_SESSION['user']){
         echo "<script>
         alert('Unauthorized');
@@ -14,7 +12,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>User Dashboard</title>
+  <title>Food Menu</title>
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Bootstrap Icons -->
@@ -51,47 +49,30 @@
     </div>
   </nav>
 
-  <!-- Main Content -->
-  <div class="container my-4 flex-grow-1">
-    <h2 class="mb-4">My Orders</h2>
-
-    <!-- Orders Table -->
-    <div class="table-responsive">
-      <table class="table table-bordered table-striped">
-        <thead class="table-dark">
-          <tr>
-            <th>Order ID</th>
-            <th>Item</th>
-            <th>Quantity</th>
-            <th>Status</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Example static data -->
-          <tr>
-            <td>#1001</td>
-            <td>Pizza</td>
-            <td>2</td>
-            <td><span class="badge bg-success">Delivered</span></td>
-            <td>2025-09-23</td>
-          </tr>
-          <tr>
-            <td>#1002</td>
-            <td>Burger</td>
-            <td>1</td>
-            <td><span class="badge bg-warning text-dark">Pending</span></td>
-            <td>2025-09-24</td>
-          </tr>
-          <tr>
-            <td>#1003</td>
-            <td>Pasta</td>
-            <td>3</td>
-            <td><span class="badge bg-danger">Cancelled</span></td>
-            <td>2025-09-21</td>
-          </tr>
-        </tbody>
-      </table>
+  <div class="container py-5">
+    <h2 class="text-center mb-4">🍽️ Our Food Menu</h2>
+    <div class="row g-4">
+    <?php 
+        $sql = "SELECT * FROM items where status like '%Active%'";
+        $query = mysqli_query($conn,$sql);
+        while($row = mysqli_fetch_assoc($query)){
+            ?>
+            <div class="col-md-4 col-sm-6">
+                <div class="card menu-card shadow-sm">
+                <img src="https://via.placeholder.com/400x200.png?text=Pizza" class="card-img-top" alt="Food Image">
+                <div class="card-body">
+                    <h5 class="card-title"><?php echo $row['name']; ?></h5>
+                    <p class="text-muted">Category:<?php echo $row['category']; ?></p>
+                    <p class="mb-1"><strong>Price:</strong> ₹ <?php echo $row['price']; ?></p>
+                    <p class="mb-1"><strong>Stock:</strong> <?php echo $row['stockqty']; ?></p>
+                    <p class="small text-muted"><?php echo $row['remarks']; ?></p>
+                    <button class="btn btn-success w-100 mt-2">Order Now</button>
+                </div>
+                </div>
+            </div>
+            <?php
+        }
+    ?>
     </div>
   </div>
 

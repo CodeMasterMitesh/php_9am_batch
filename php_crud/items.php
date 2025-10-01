@@ -37,10 +37,10 @@
                     <td><?php echo $row['category'] ?></td>
                     <td>₹<?php echo $row['price'] ?></td>
                     <td><?php echo $row['stockqty'] ?></td>
-                    <td><span class="badge bg-success">Active</span></td>
+                    <td><span class="badge <?php if($row['status'] == 'Active'){echo 'bg-success';} else{echo 'bg-danger';}?>"><?php echo $row['status'] ?></span></td>
                     <td>
                       <button class="btn btn-sm btn-warning"><a href="edit_items.php?id=<?php echo $row['id']; ?>"><i class="bi bi-pencil-square"></i></a></button>
-                      <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+                      <button class="btn btn-sm btn-danger"><a href="deletedb.php?id=<?php echo $row['id']; ?>&db=items"><i class="bi bi-trash"></i></a></button>
                     </td>
                   </tr>
                 <?php

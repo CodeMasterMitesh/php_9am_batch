@@ -6,10 +6,6 @@ $sql = "SELECT * FROM items where id = $pid";
 $query = mysqli_query($conn,$sql);
 $row = mysqli_fetch_assoc($query);
 
-
-// debug($row);
-// exit;
-
 ?>
   <!-- Main Content -->
   <div class="container my-4 flex-grow-1">
@@ -21,8 +17,9 @@ $row = mysqli_fetch_assoc($query);
         <a href="items.php" class="btn btn-dark float-right">Back</a>
       </div>
       <div class="card-body">
-        <form action="insertdb.php" method="POST" enctype="multipart/form-data">
+        <form action="updatedb.php" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="db" value="items">
+        <input type="hidden" name="id" value="<?php echo $pid; ?>">
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label">Item Name</label>
@@ -57,7 +54,7 @@ $row = mysqli_fetch_assoc($query);
             </div>
           </div>
           <div class="mt-3">
-            <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Save Item</button>
+            <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Update Item</button>
           </div>
         </form>
       </div>
