@@ -1,4 +1,7 @@
-<?php include 'includes/nav.php'; ?>
+<?php 
+include 'config/connection.php';
+include 'includes/nav.php'; 
+?>
  <!-- Main Content -->
   <div class="container my-4 flex-grow-1">
     <h1 class="mb-4">Manage Items</h1>

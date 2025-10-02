@@ -7,7 +7,7 @@
     $useranme = $_POST['username'];
     $pass = $_POST['password'];
 
-    $sql = "SELECT * from users where username like '%$useranme%'" ;
+    $sql = "SELECT * FROM users WHERE username = '$useranme' LIMIT 1";
     $query = mysqli_query($conn,$sql);
     $row = mysqli_fetch_assoc($query);
     

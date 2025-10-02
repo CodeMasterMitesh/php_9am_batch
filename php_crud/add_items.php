@@ -1,5 +1,5 @@
 <?php 
-
+include 'config/connection.php';
 include 'includes/nav.php'; 
 
 ?>

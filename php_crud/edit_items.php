@@ -1,4 +1,5 @@
 <?php 
+include 'config/connection.php';
 include 'includes/nav.php';
 $pid = $_GET['id'];
 
