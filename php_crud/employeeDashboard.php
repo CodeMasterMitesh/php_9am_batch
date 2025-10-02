@@ -17,7 +17,7 @@
       
       <!-- Logo & Profile -->
       <div class="d-flex align-items-center">
-        <a class="navbar-brand fw-bold me-3" href="#"><?php echo $_SESSION['user']['firstname']; ?> <span style="font-size:12px;">(<?php echo ucfirst($_SESSION['user']['type']); ?>)</span></a>
+        <a class="navbar-brand fw-bold me-3" href="#"><?php echo $_SESSION['employee']['firstname']; ?> <span style="font-size:12px;">(<?php echo ucfirst($_SESSION['employee']['type']); ?>)</span></a>
         <i class="bi bi-person-circle text-white fs-3"></i>
       </div>
 

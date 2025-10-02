@@ -1,5 +1,5 @@
 <?php
-  include 'config/connection.php';
+  include_once 'config/connection.php';
   if($_SERVER['REQUEST_METHOD'] == "POST"){
 
     // debug($_POST);
@@ -13,20 +13,32 @@
     
     if($useranme === $row['username']){
       if($pass === $row['password']){
+        // debug($row);
+        // exit;
         if($row['type'] == "admin"){
            $_SESSION['admin'] = $row;
             echo "<script>
               alert('Login Successfully');
               location.href = 'index.php';
           </script>";
-        }else{
-           $_SESSION['user'] = $row;
+        }else if($row['type'] == "student"){
+           $_SESSION['student'] = $row;
             echo "<script>
               alert('Login Successfully');
               location.href = 'index.php';
           </script>";
+        }else if($row['type'] == "employee"){
+           $_SESSION['employee'] = $row;
+            echo "<script>
+              alert('Login Successfully');
+              location.href = 'index.php';
+          </script>";
+        }else{
+             echo "<script>
+              alert('Unauthorized');
+              location.href = '404.php';
+          </script>";
         }
-       
       }else{
         echo "<script>
             alert('Wrong Password');
