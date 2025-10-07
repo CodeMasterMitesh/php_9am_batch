@@ -35,7 +35,7 @@ include 'includes/nav.php';
                 ?>
                   <tr>
                     <td><?php echo $row['id'] ?></td>
-                    <td><img src="files/food.jpg" width="80px" class="rounded" alt="item"></td>
+                    <td><img src="<?php echo $row['image']; ?>" width="80px" class="rounded" alt="item"></td>
                     <td><?php echo $row['name'] ?></td>
                     <td><?php echo $row['category'] ?></td>
                     <td>₹<?php echo $row['price'] ?></td>

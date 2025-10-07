@@ -20,7 +20,7 @@
         location.href = '404.php';
         </script>";
     }
-    include 'userDashboard.php';
+    include 'studentDashboard.php';
   }else if($key == 'employee'){
     if(!$_SESSION['employee']){
         echo "<script>
@@ -31,7 +31,7 @@
     include 'employeeDashboard.php';
   }else{
     // Redirect to login.php
-    header("Location: login.php");
+    header("Location: canteen_management_software/login.php");
     exit();
   }
 ?>

@@ -41,6 +41,7 @@ $row = mysqli_fetch_assoc($query);
             <div class="col-md-6">
               <label class="form-label">Image</label>
               <input type="file" name="image" class="form-control">
+              <img width="100px" src="<?php echo $row['image'];?>" alt="">
             </div>
             <div class="col-md-12">
               <label class="form-label">Remarks</label>

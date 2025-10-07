@@ -6,6 +6,33 @@
         location.href = '404.php';
       </script>";
     }
+
+
+   if ($_SERVER['REQUEST_METHOD'] == "POST") {
+    // debug($_SESSION);
+    // debug($_POST);
+
+    $pid = $_POST['pid'];
+    $uid = $_POST['uid'];
+    $price = $_POST['price'];
+    $orderqty = $_POST['orderqty'];
+
+    $amt = $price * $orderqty;
+
+    $sql = "INSERT INTO `order`(`pid`,`uid`,`qty`,`amt`) VALUES('$pid','$uid','$orderqty','$amt')";
+    $query = mysqli_query($conn,$sql);
+   if ($query) {
+        echo "<script>
+            alert('Data Received successfully!');
+            window.location.href = 'orders.php';
+        </script>";
+    } else {
+        echo "<script>
+            alert('Error: " . mysqli_error($conn) . "');
+            window.location.href = 'menu.php';
+        </script>";
+    }
+   }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -59,14 +86,20 @@
             ?>
             <div class="col-md-4 col-sm-6">
                 <div class="card menu-card shadow-sm">
-                <img src="https://via.placeholder.com/400x200.png?text=Pizza" class="card-img-top" alt="Food Image">
+                <img width="200px" src="<?php echo $row['image']; ?>" class="card-img-top" alt="Food Image">
                 <div class="card-body">
                     <h5 class="card-title"><?php echo $row['name']; ?></h5>
                     <p class="text-muted">Category:<?php echo $row['category']; ?></p>
                     <p class="mb-1"><strong>Price:</strong> ₹ <?php echo $row['price']; ?></p>
-                    <p class="mb-1"><strong>Stock:</strong> <?php echo $row['stockqty']; ?></p>
                     <p class="small text-muted"><?php echo $row['remarks']; ?></p>
-                    <button class="btn btn-success w-100 mt-2">Order Now</button>
+                    <form action="<?php $_SERVER['PHP_SELF']; ?>" method="POST">
+                      <input type="hidden" name="pid" value="<?php echo $row['id']; ?>">
+                      <input type="hidden" name="uid" value="<?php echo $_SESSION['student']['id']; ?>">
+                      <input type="hidden" name="price" value="<?php echo $row['price']; ?>">
+                      <label>Order Qty :</label>
+                      <input style="width:50px" type="text" name="orderqty" value=''>
+                      <button type="submit" class="btn btn-success w-100 mt-2">Order Now</button>
+                    </form>
                 </div>
                 </div>
             </div>
