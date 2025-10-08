@@ -1,4 +1,5 @@
 <?php
+include 'config/connection.php';
 // Optional: restrict to kitchen staff login
 if (!$_SESSION['employee']) {
   echo "<script>alert('Unauthorized Access'); location.href='404.php';</script>";
@@ -105,7 +106,7 @@ while ($row = mysqli_fetch_assoc($query)) {
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
   <div class="container-fluid">
-    <a class="navbar-brand fw-bold" href="index.php">Kitchen Dashboard (<?php echo $_SESSION['employee']['firstname']; ?>)</a>
+    <a class="navbar-brand fw-bold" href="#">Kitchen Dashboard</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -199,9 +200,6 @@ function updateStatus(orderId, newStatus) {
   })
   .catch(err => console.error(err));
 }
-// setInterval(() => {
-  
-// }, 20000);
 </script>
 </body>
 </html>

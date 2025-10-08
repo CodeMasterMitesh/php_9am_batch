@@ -31,7 +31,7 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item"><a class="nav-link text-white" href="menu.php">Menu</a></li>
-          <li class="nav-item"><a class="nav-link text-white" href="#">My Orders</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="studentsOrders.php">My Orders</a></li>
           <li class="nav-item"><a class="nav-link text-white" href="#">Profile</a></li>
           <li class="nav-item"><a class="nav-link text-white" href="#">Support</a></li>
           <li class="nav-item"><a class="nav-link text-white" href="logout.php">Logout</a></li>
