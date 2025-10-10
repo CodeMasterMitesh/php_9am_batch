@@ -1,6 +1,6 @@
 <?php 
-include 'includes/nav.php';
 include 'config/connection.php';
+include 'includes/nav.php';
 
 // 🟩 Handle search
 $search = "";

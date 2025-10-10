@@ -20,7 +20,7 @@
    if ($query) {
         echo "<script>
             alert('Data Received successfully!');
-            window.location.href = 'orders.php';
+            window.location.href = 'studentsOrders.php';
         </script>";
     } else {
         echo "<script>
