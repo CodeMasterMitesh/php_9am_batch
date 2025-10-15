@@ -280,191 +280,82 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['place_order'])) {
     }
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Food Menu</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-  <style>
-    body {
-      background: #f8f9fa;
-      font-family: 'Poppins', sans-serif;
-    }
-    .navbar {
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    .navbar-brand {
-      font-size: 1.3rem;
-      letter-spacing: 0.5px;
-    }
-    h2 {
-      font-weight: 600;
-      color: #343a40;
-    }
-    .menu-card {
-      border: none;
-      border-radius: 16px;
-      overflow: hidden;
-      transition: all 0.3s ease;
-      background: #fff;
-    }
-    .menu-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    }
-    .menu-card img {
-      height: 220px;
-      object-fit: cover;
-    }
-    .card-body {
-      padding: 1.2rem;
-    }
-    .card-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #212529;
-    }
-    .btn-success {
-      border-radius: 12px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
-    .btn-success:hover {
-      background-color: #218838;
-      transform: scale(1.03);
-    }
-    footer {
-      background: #0d6efd;
-      font-size: 0.9rem;
-      letter-spacing: 0.4px;
-    }
-    label {
-      font-size: 0.9rem;
-      font-weight: 500;
-    }
-    input[name="orderqty"] {
-      border-radius: 6px;
-      border: 1px solid #ced4da;
-      padding: 4px 6px;
-      text-align: center;
-    }
-    .cart-item-img {
-      width: 80px;
-      height: 60px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
-    .cart-qty-controls {
-      display: flex;
-      align-items: center;
-    }
-    .cart-qty-controls button {
-      width: 30px;
-      height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .cart-qty-controls input {
-      width: 50px;
-      text-align: center;
-      margin: 0 5px;
-    }
-    .empty-cart {
-      text-align: center;
-      padding: 2rem;
-    }
-    .empty-cart i {
-      font-size: 3rem;
-      color: #6c757d;
-      margin-bottom: 1rem;
-    }
-  </style>
-</head>
-<body class="d-flex flex-column min-vh-100">
+<?php include 'includes/studentNav.php'; ?>
 
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
-    <div class="container-fluid">
-      <div class="d-flex align-items-center">
-        <a class="navbar-brand fw-bold me-2" href="#">
-          <?php echo $_SESSION['student']['firstname']; ?> 
-          <span class="text-secondary" style="font-size:12px;">(<?php echo ucfirst($_SESSION['student']['type']); ?>)</span>
-        </a>
-        <i class="bi bi-person-circle text-white fs-3"></i>
-      </div>
-
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link active text-white" href="menu.php">Menu</a></li>
-          <li class="nav-item">
-            <a class="nav-link text-white position-relative" href="#" data-bs-toggle="modal" data-bs-target="#cartModal">
-              <i class="bi bi-cart4"></i> Cart 
-              <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
-            </a>
-          </li>
-          <li class="nav-item"><a class="nav-link text-white" href="studentsOrders.php">My Orders</a></li>
-          <li class="nav-item"><a class="nav-link text-white" href="logout.php">Logout</a></li>
-        </ul>
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-title">
+        <h1><i class="bi bi-menu-button-wide me-2"></i>Our Food Menu</h1>
+        <p>Discover our delicious selection of café favorites</p>
       </div>
     </div>
-  </nav>
 
-  <!-- Menu Section -->
-  <div class="container py-5">
-    <h2 class="text-center mb-5">🍽️ Our Food Menu</h2>
+    <!-- User Info Bar -->
+    <div class="user-info-bar">
+      <div class="user-details">
+        <div class="user-avatar">
+          <i class="bi bi-person-circle"></i>
+        </div>
+        <div class="user-text">
+          <h4><?php echo $_SESSION['student']['firstname']; ?></h4>
+          <p><?php echo ucfirst($_SESSION['student']['type']); ?> Student</p>
+        </div>
+      </div>
+      <div class="cart-indicator">
+        <button class="cart-btn" data-bs-toggle="modal" data-bs-target="#cartModal">
+          <i class="bi bi-cart4"></i>
+          View Cart
+          <span id="cartCount" class="cart-count">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Menu Section -->
     <div class="row g-4">
-    <?php 
-      $sql = "SELECT * FROM items WHERE status LIKE '%Active%'";
-      $query = mysqli_query($conn, $sql);
-      while($row = mysqli_fetch_assoc($query)){
-      ?>
-        <div class="col-lg-4 col-md-6">
-          <div class="card menu-card shadow-sm h-100">
-            <img src="<?php echo $row['image']; ?>" class="card-img-top" alt="Food Image">
-            <div class="card-body d-flex flex-column">
-              <h5 class="card-title"><?php echo $row['name']; ?></h5>
-              <p class="text-muted mb-1"><strong>Category:</strong> <?php echo $row['category']; ?></p>
-              <p class="mb-2"><strong>Price:</strong> ₹ <?php echo $row['price']; ?></p>
-              <p class="small text-muted mb-3"><?php echo $row['remarks']; ?></p>
-              <button class="btn btn-success addToCart"
-                      data-pid="<?php echo $row['id']; ?>"
-                      data-name="<?php echo $row['name']; ?>"
-                      data-price="<?php echo $row['price']; ?>"
-                      data-image="<?php echo $row['image']; ?>">
-                <i class="bi bi-cart-plus"></i> Add to Cart
-              </button>
+      <?php 
+        $sql = "SELECT * FROM items WHERE status LIKE '%Active%'";
+        $query = mysqli_query($conn, $sql);
+        while($row = mysqli_fetch_assoc($query)){
+        ?>
+          <div class="col-lg-4 col-md-6">
+            <div class="card menu-card shadow-sm h-100">
+              <img src="<?php echo $row['image']; ?>" class="card-img-top" alt="Food Image">
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title"><?php echo $row['name']; ?></h5>
+                <p class="card-category"><strong>Category:</strong> <?php echo $row['category']; ?></p>
+                <p class="card-price">₹ <?php echo $row['price']; ?></p>
+                <p class="card-remarks"><?php echo $row['remarks']; ?></p>
+                <button class="btn add-to-cart-btn addToCart"
+                        data-pid="<?php echo $row['id']; ?>"
+                        data-name="<?php echo $row['name']; ?>"
+                        data-price="<?php echo $row['price']; ?>"
+                        data-image="<?php echo $row['image']; ?>">
+                  <i class="bi bi-cart-plus"></i> Add to Cart
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      <?php
-      }
-      ?>
+        <?php
+        }
+        ?>
     </div>
   </div>
 
   <!-- Cart Modal -->
-  <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+  <div class="modal fade cart-modal" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content">
-        <div class="modal-header bg-dark text-white">
-          <h5 class="modal-title" id="cartModalLabel">🛒 Your Cart</h5>
+        <div class="modal-header">
+          <h5 class="modal-title" id="cartModalLabel"><i class="bi bi-cart4 me-2"></i>Your Cart</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body" id="cartContent">
           <!-- Cart content will be loaded here -->
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Continue Shopping</button>
           <button class="btn btn-success" id="proceedToCheckout">Proceed to Checkout</button>
         </div>
       </div>
@@ -472,10 +363,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['place_order'])) {
   </div>
 
   <!-- Checkout Modal -->
-  <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+  <div class="modal fade checkout-modal" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content rounded-3 shadow">
-        <div class="modal-header bg-primary text-white">
+        <div class="modal-header">
           <h5 class="modal-title" id="checkoutModalLabel">Complete Your Payment</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
@@ -499,13 +390,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['place_order'])) {
     </div>
   </div>
 
-  <!-- Footer -->
-  <footer class="text-white text-center py-3 mt-auto">
-    <p class="mb-0">&copy; 2025 User Dashboard. All rights reserved.</p>
-  </footer>
-
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <?php include 'includes/footer.php'; ?>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   
   <script>
@@ -610,9 +495,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['place_order'])) {
           },
           error: function() {
             $('#cartContent').html(`
-              <div class="empty-cart">
-                <i class="bi bi-cart-x"></i>
-                <h5>Error loading cart</h5>
+              <div class="empty-cart text-center py-4">
+                <i class="bi bi-cart-x" style="font-size: 3rem; color: #8B7355;"></i>
+                <h5 class="mt-3" style="color: var(--primary);">Error loading cart</h5>
                 <p class="text-muted">Please try again</p>
               </div>
             `);
@@ -737,5 +622,3 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['place_order'])) {
       });
     });
   </script>
-</body>
-</html>

@@ -5,6 +5,7 @@ $host = "localhost";
 $dbUser = "root";
 $dbpass = "";
 $db = "abc_college_db";
+date_default_timezone_set('Asia/Kolkata');
 
 $conn = mysqli_connect($host,$dbUser,$dbpass,$db);
 
@@ -13,7 +14,6 @@ if($conn){
 }else{
     // echo "some error";
 }
-
 
 function debug($str){
     echo "<pre>";

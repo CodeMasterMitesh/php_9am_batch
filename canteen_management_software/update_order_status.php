@@ -1,9 +1,9 @@
 <?php
 include 'config/connection.php';
 
-if (!$_SESSION['employee'] && !$_SESSION['admin']) {
-    die('Unauthorized');
-}
+// if (!$_SESSION['employee'] && !$_SESSION['admin']) {
+//     die('Unauthorized');
+// }
 
 if (isset($_POST['order_id']) && isset($_POST['status'])) {
     $order_id = $_POST['order_id'];

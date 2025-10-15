@@ -83,214 +83,101 @@ while ($row = mysqli_fetch_assoc($detailed_query)) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kitchen Dashboard</title>
+<title>The Hungar Bar Kitchen Dashboard</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-<style>
-  body {
-    background: #f8f9fa;
-    font-family: 'Poppins', sans-serif;
-  }
-  .navbar {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
-  h2 {
-    font-weight: 600;
-    color: #343a40;
-  }
-  .kanban-board {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  .kanban-column {
-    flex: 1;
-    min-width: 300px;
-    background: #fff;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
-  .kanban-column h4 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-weight: 600;
-    color: #0d6efd;
-  }
-  .order-card {
-    background: #fff;
-    border: 1px solid #e9ecef;
-    border-radius: 14px;
-    padding: 15px;
-    margin-bottom: 15px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-    transition: all 0.2s ease;
-  }
-  .order-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  }
-  .order-header {
-    border-bottom: 1px solid #e9ecef;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-  }
-  .order-id {
-    font-weight: 600;
-    color: #0d6efd;
-    font-size: 0.9rem;
-  }
-  .order-date {
-    font-size: 0.8rem;
-    color: #6c757d;
-  }
-  .order-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-    padding: 8px;
-    background: #f8f9fa;
-    border-radius: 8px;
-  }
-  .order-item img {
-    width: 60px;
-    height: 60px;
-    border-radius: 8px;
-    object-fit: cover;
-    margin-right: 10px;
-  }
-  .item-details {
-    flex: 1;
-  }
-  .item-name {
-    font-weight: 500;
-    font-size: 0.9rem;
-    margin-bottom: 2px;
-  }
-  .item-qty-price {
-    font-size: 0.8rem;
-    color: #6c757d;
-  }
-  .order-footer {
-    border-top: 1px solid #e9ecef;
-    padding-top: 10px;
-    margin-top: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .total-amount {
-    font-weight: 600;
-    color: #28a745;
-  }
-  .student-info {
-    font-size: 0.8rem;
-    color: #6c757d;
-  }
-  .status-btn {
-    font-size: 0.85rem;
-    border-radius: 10px;
-    padding: 6px 12px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  .status-btn:hover {
-    transform: scale(1.05);
-  }
-  .status-btn.received { background-color: #ffc107; color: #000; }
-  .status-btn.preparing { background-color: #17a2b8; color: #fff; }
-  .status-btn.ready { background-color: #fd7e14; color: #fff; }
-  .status-btn.delivered { background-color: #28a745; color: #fff; }
-  .badge-delivered {
-    background-color: #28a745;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 10px;
-    font-size: 0.85rem;
-  }
-  .empty-state {
-    text-align: center;
-    padding: 40px 20px;
-    color: #6c757d;
-  }
-  .empty-state i {
-    font-size: 3rem;
-    margin-bottom: 15px;
-    opacity: 0.5;
-  }
-</style>
+<link rel="stylesheet" href="assets/css/employeeStyle.css">
 </head>
 <body class="d-flex flex-column min-vh-100">
 
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
+<nav class="navbar navbar-kitchen navbar-expand-lg">
   <div class="container-fluid">
-    <a class="navbar-brand fw-bold" href="index.php">
-      🍳 Kitchen Dashboard (<?php echo $_SESSION['employee']['firstname']; ?>)
+    <a class="navbar-brand text-white" href="#">
+      <img src="assets/logo/the_hunger_bar_logo.png" width="40" height="40" class="rounded-circle me-2">
+      <span>The Hunger Bar Kitchen</span>
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
-      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <span class="nav-link text-white">
-            <i class="bi bi-clock"></i> <?php echo date('h:i A'); ?>
-          </span>
-        </li>
-        <li class="nav-item"><a class="nav-link text-white" href="logout.php">Logout</a></li>
-      </ul>
+    <div class="navbar-nav ms-auto">
+      <span class="navbar-text text-white me-3">
+        <i class="bi bi-person-circle me-1"></i>
+        <?php echo $_SESSION['employee']['firstname']; ?>
+      </span>
+      <span class="navbar-text text-white me-3">
+        <i class="bi bi-clock me-1"></i>
+        <?php echo date('h:i A'); ?>
+      </span>
+      <a class="nav-link text-white" href="logout.php">
+        <i class="bi bi-box-arrow-right"></i>
+        Logout
+      </a>
     </div>
   </div>
 </nav>
 
-<!-- Kanban Board -->
-<div class="container py-5">
-  <h2 class="text-center mb-5">👨‍🍳 Kitchen Order Status Board</h2>
+<!-- Main Content -->
+<div class="container-fluid main-content">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-title">
+      <h1><i class="bi bi-speedometer2 me-2"></i>Kitchen Order Management</h1>
+      <p>Monitor and update order status in real-time</p>
+    </div>
+  </div>
+
+  <!-- Kanban Board -->
   <div class="kanban-board">
     
-    <!-- Received -->
-    <div class="kanban-column">
-      <h4>📥 Received</h4>
+    <!-- Received Column -->
+    <div class="kanban-column received">
+      <div class="column-header">
+        <h4>
+          <i class="bi bi-inbox"></i>
+          Received
+          <span class="order-count">
+            <?php 
+            $received_orders = array_filter($detailed_orders, function($order) {
+              return strtolower($order['status']) == 'received' || strtolower($order['status']) == 'pending';
+            });
+            echo count($received_orders);
+            ?>
+          </span>
+        </h4>
+      </div>
       <div id="received-column">
-        <?php 
-        $received_orders = array_filter($detailed_orders, function($order) {
-          return strtolower($order['status']) == 'received' || strtolower($order['status']) == 'pending';
-        });
-        
-        if (empty($received_orders)): ?>
+        <?php if (empty($received_orders)): ?>
           <div class="empty-state">
             <i class="bi bi-inbox"></i>
-            <p>No orders received</p>
+            <h5>No Orders</h5>
+            <p>New orders will appear here</p>
           </div>
         <?php else: ?>
           <?php foreach ($received_orders as $order): ?>
-            <div class="order-card" data-id="<?php echo $order['order_id']; ?>">
+            <div class="order-card received" data-id="<?php echo $order['order_id']; ?>">
               <div class="order-header">
-                <div class="order-id">Order #<?php echo $order['order_id']; ?></div>
+                <div class="order-id">#<?php echo $order['order_id']; ?></div>
                 <div class="order-date"><?php echo date('M j, g:i A', strtotime($order['date'])); ?></div>
               </div>
               
-              <?php foreach ($order['items'] as $item): ?>
-                <div class="order-item">
-                  <img src="<?php echo $item['image']; ?>" alt="<?php echo $item['name']; ?>">
-                  <div class="item-details">
-                    <div class="item-name"><?php echo $item['name']; ?></div>
-                    <div class="item-qty-price"><?php echo $item['quantity']; ?> x ₹<?php echo $item['price']; ?> = ₹<?php echo $item['amt']; ?></div>
+              <div class="order-items">
+                <?php foreach ($order['items'] as $item): ?>
+                  <div class="order-item">
+                    <img src="<?php echo $item['image']; ?>" alt="<?php echo $item['name']; ?>" onerror="this.src='https://via.placeholder.com/50?text=No+Image'">
+                    <div class="item-details">
+                      <div class="item-name"><?php echo $item['name']; ?></div>
+                      <div class="item-qty-price"><?php echo $item['quantity']; ?> x ₹<?php echo $item['price']; ?></div>
+                    </div>
                   </div>
-                </div>
-              <?php endforeach; ?>
+                <?php endforeach; ?>
+              </div>
               
               <div class="order-footer">
                 <div>
-                  <div class="total-amount">Total: ₹<?php echo $order['amt']; ?></div>
-                  <div class="student-info">By: <?php echo $order['student_name']; ?> </div>
+                  <div class="total-amount">₹<?php echo $order['amt']; ?></div>
+                  <div class="student-info"><?php echo $order['student_name']; ?></div>
                 </div>
-                <button class="btn status-btn preparing" onclick="updateStatus(<?php echo $order['order_id']; ?>, 'preparing')">
-                  Start Preparing
+                <button class="status-btn preparing" onclick="updateStatus(<?php echo $order['order_id']; ?>, 'preparing')">
+                  <i class="bi bi-play-circle"></i>
+                  Start Prep
                 </button>
               </div>
             </div>
@@ -299,45 +186,57 @@ while ($row = mysqli_fetch_assoc($detailed_query)) {
       </div>
     </div>
 
-    <!-- Preparing -->
-    <div class="kanban-column">
-      <h4>🍳 Preparing</h4>
+    <!-- Preparing Column -->
+    <div class="kanban-column preparing">
+      <div class="column-header">
+        <h4>
+          <i class="bi bi-egg-fried"></i>
+          Preparing
+          <span class="order-count">
+            <?php 
+            $preparing_orders = array_filter($detailed_orders, function($order) {
+              return strtolower($order['status']) == 'preparing';
+            });
+            echo count($preparing_orders);
+            ?>
+          </span>
+        </h4>
+      </div>
       <div id="preparing-column">
-        <?php 
-        $preparing_orders = array_filter($detailed_orders, function($order) {
-          return strtolower($order['status']) == 'preparing';
-        });
-        
-        if (empty($preparing_orders)): ?>
+        <?php if (empty($preparing_orders)): ?>
           <div class="empty-state">
             <i class="bi bi-egg-fried"></i>
-            <p>No orders being prepared</p>
+            <h5>All Caught Up</h5>
+            <p>No orders in preparation</p>
           </div>
         <?php else: ?>
           <?php foreach ($preparing_orders as $order): ?>
-            <div class="order-card" data-id="<?php echo $order['order_id']; ?>">
+            <div class="order-card preparing" data-id="<?php echo $order['order_id']; ?>">
               <div class="order-header">
-                <div class="order-id">Order #<?php echo $order['order_id']; ?></div>
+                <div class="order-id">#<?php echo $order['order_id']; ?></div>
                 <div class="order-date"><?php echo date('M j, g:i A', strtotime($order['date'])); ?></div>
               </div>
               
-              <?php foreach ($order['items'] as $item): ?>
-                <div class="order-item">
-                  <img src="<?php echo $item['image']; ?>" alt="<?php echo $item['name']; ?>">
-                  <div class="item-details">
-                    <div class="item-name"><?php echo $item['name']; ?></div>
-                    <div class="item-qty-price"><?php echo $item['quantity']; ?> x ₹<?php echo $item['price']; ?> = ₹<?php echo $item['amt']; ?></div>
+              <div class="order-items">
+                <?php foreach ($order['items'] as $item): ?>
+                  <div class="order-item">
+                    <img src="<?php echo $item['image']; ?>" alt="<?php echo $item['name']; ?>" onerror="this.src='https://via.placeholder.com/50?text=No+Image'">
+                    <div class="item-details">
+                      <div class="item-name"><?php echo $item['name']; ?></div>
+                      <div class="item-qty-price"><?php echo $item['quantity']; ?> x ₹<?php echo $item['price']; ?></div>
+                    </div>
                   </div>
-                </div>
-              <?php endforeach; ?>
+                <?php endforeach; ?>
+              </div>
               
               <div class="order-footer">
                 <div>
-                  <div class="total-amount">Total: ₹<?php echo $order['amt']; ?></div>
-                  <div class="student-info">By: <?php echo $order['student_name']; ?> </div>
+                  <div class="total-amount">₹<?php echo $order['amt']; ?></div>
+                  <div class="student-info"><?php echo $order['student_name']; ?></div>
                 </div>
-                <button class="btn status-btn ready" onclick="updateStatus(<?php echo $order['order_id']; ?>, 'ready')">
-                  Mark as Ready
+                <button class="status-btn ready" onclick="updateStatus(<?php echo $order['order_id']; ?>, 'ready')">
+                  <i class="bi bi-check-circle"></i>
+                  Mark Ready
                 </button>
               </div>
             </div>
@@ -346,45 +245,57 @@ while ($row = mysqli_fetch_assoc($detailed_query)) {
       </div>
     </div>
 
-    <!-- Ready -->
-    <div class="kanban-column">
-      <h4>✅ Ready</h4>
+    <!-- Ready Column -->
+    <div class="kanban-column ready">
+      <div class="column-header">
+        <h4>
+          <i class="bi bi-check-circle"></i>
+          Ready
+          <span class="order-count">
+            <?php 
+            $ready_orders = array_filter($detailed_orders, function($order) {
+              return strtolower($order['status']) == 'ready';
+            });
+            echo count($ready_orders);
+            ?>
+          </span>
+        </h4>
+      </div>
       <div id="ready-column">
-        <?php 
-        $ready_orders = array_filter($detailed_orders, function($order) {
-          return strtolower($order['status']) == 'ready';
-        });
-        
-        if (empty($ready_orders)): ?>
+        <?php if (empty($ready_orders)): ?>
           <div class="empty-state">
             <i class="bi bi-check-circle"></i>
-            <p>No orders ready</p>
+            <h5>Ready for Pickup</h5>
+            <p>Completed orders will appear here</p>
           </div>
         <?php else: ?>
           <?php foreach ($ready_orders as $order): ?>
-            <div class="order-card" data-id="<?php echo $order['order_id']; ?>">
+            <div class="order-card ready" data-id="<?php echo $order['order_id']; ?>">
               <div class="order-header">
-                <div class="order-id">Order #<?php echo $order['order_id']; ?></div>
+                <div class="order-id">#<?php echo $order['order_id']; ?></div>
                 <div class="order-date"><?php echo date('M j, g:i A', strtotime($order['date'])); ?></div>
               </div>
               
-              <?php foreach ($order['items'] as $item): ?>
-                <div class="order-item">
-                  <img src="<?php echo $item['image']; ?>" alt="<?php echo $item['name']; ?>">
-                  <div class="item-details">
-                    <div class="item-name"><?php echo $item['name']; ?></div>
-                    <div class="item-qty-price"><?php echo $item['quantity']; ?> x ₹<?php echo $item['price']; ?> = ₹<?php echo $item['amt']; ?></div>
+              <div class="order-items">
+                <?php foreach ($order['items'] as $item): ?>
+                  <div class="order-item">
+                    <img src="<?php echo $item['image']; ?>" alt="<?php echo $item['name']; ?>" onerror="this.src='https://via.placeholder.com/50?text=No+Image'">
+                    <div class="item-details">
+                      <div class="item-name"><?php echo $item['name']; ?></div>
+                      <div class="item-qty-price"><?php echo $item['quantity']; ?> x ₹<?php echo $item['price']; ?></div>
+                    </div>
                   </div>
-                </div>
-              <?php endforeach; ?>
+                <?php endforeach; ?>
+              </div>
               
               <div class="order-footer">
                 <div>
-                  <div class="total-amount">Total: ₹<?php echo $order['amt']; ?></div>
-                  <div class="student-info">By: <?php echo $order['student_name']; ?> </div>
+                  <div class="total-amount">₹<?php echo $order['amt']; ?></div>
+                  <div class="student-info"><?php echo $order['student_name']; ?></div>
                 </div>
-                <button class="btn status-btn delivered" onclick="updateStatus(<?php echo $order['order_id']; ?>, 'delivered')">
-                  Mark as Delivered
+                <button class="status-btn delivered" onclick="updateStatus(<?php echo $order['order_id']; ?>, 'delivered')">
+                  <i class="bi bi-truck"></i>
+                  Deliver
                 </button>
               </div>
             </div>
@@ -393,44 +304,58 @@ while ($row = mysqli_fetch_assoc($detailed_query)) {
       </div>
     </div>
 
-    <!-- Delivered -->
-    <div class="kanban-column">
-      <h4>📦 Delivered</h4>
+    <!-- Delivered Column -->
+    <div class="kanban-column delivered">
+      <div class="column-header">
+        <h4>
+          <i class="bi bi-truck"></i>
+          Delivered
+          <span class="order-count">
+            <?php 
+            $delivered_orders = array_filter($detailed_orders, function($order) {
+              return strtolower($order['status']) == 'delivered';
+            });
+            echo count($delivered_orders);
+            ?>
+          </span>
+        </h4>
+      </div>
       <div id="delivered-column">
-        <?php 
-        $delivered_orders = array_filter($detailed_orders, function($order) {
-          return strtolower($order['status']) == 'delivered';
-        });
-        
-        if (empty($delivered_orders)): ?>
+        <?php if (empty($delivered_orders)): ?>
           <div class="empty-state">
             <i class="bi bi-truck"></i>
-            <p>No delivered orders</p>
+            <h5>Delivery History</h5>
+            <p>Delivered orders will appear here</p>
           </div>
         <?php else: ?>
           <?php foreach ($delivered_orders as $order): ?>
-            <div class="order-card" data-id="<?php echo $order['order_id']; ?>">
+            <div class="order-card delivered" data-id="<?php echo $order['order_id']; ?>">
               <div class="order-header">
-                <div class="order-id">Order #<?php echo $order['order_id']; ?></div>
+                <div class="order-id">#<?php echo $order['order_id']; ?></div>
                 <div class="order-date"><?php echo date('M j, g:i A', strtotime($order['date'])); ?></div>
               </div>
               
-              <?php foreach ($order['items'] as $item): ?>
-                <div class="order-item">
-                  <img src="<?php echo $item['image']; ?>" alt="<?php echo $item['name']; ?>">
-                  <div class="item-details">
-                    <div class="item-name"><?php echo $item['name']; ?></div>
-                    <div class="item-qty-price"><?php echo $item['quantity']; ?> x ₹<?php echo $item['price']; ?> = ₹<?php echo $item['amt']; ?></div>
+              <div class="order-items">
+                <?php foreach ($order['items'] as $item): ?>
+                  <div class="order-item">
+                    <img src="<?php echo $item['image']; ?>" alt="<?php echo $item['name']; ?>" onerror="this.src='https://via.placeholder.com/50?text=No+Image'">
+                    <div class="item-details">
+                      <div class="item-name"><?php echo $item['name']; ?></div>
+                      <div class="item-qty-price"><?php echo $item['quantity']; ?> x ₹<?php echo $item['price']; ?></div>
+                    </div>
                   </div>
-                </div>
-              <?php endforeach; ?>
+                <?php endforeach; ?>
+              </div>
               
               <div class="order-footer">
                 <div>
-                  <div class="total-amount">Total: ₹<?php echo $order['amt']; ?></div>
-                  <div class="student-info">By: <?php echo $order['student_name']; ?> </div>
+                  <div class="total-amount">₹<?php echo $order['amt']; ?></div>
+                  <div class="student-info"><?php echo $order['student_name']; ?></div>
                 </div>
-                <span class="badge-delivered">Delivered</span>
+                <span class="badge-delivered">
+                  <i class="bi bi-check-lg"></i>
+                  Delivered
+                </span>
               </div>
             </div>
           <?php endforeach; ?>
@@ -442,8 +367,10 @@ while ($row = mysqli_fetch_assoc($detailed_query)) {
 </div>
 
 <!-- Footer -->
-<footer class="text-white text-center py-3 mt-auto bg-primary">
-  <p class="mb-0">&copy; 2025 Kitchen Dashboard. All rights reserved.</p>
+<footer class="footer-kitchen">
+  <div class="container">
+    <p class="mb-0">&copy; 2025 The Hungar Bar Kitchen Dashboard. All rights reserved. | Auto-refresh in <span id="refresh-timer">30</span>s</p>
+  </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -474,10 +401,24 @@ function updateStatus(orderId, newStatus) {
   }
 }
 
-// Auto-refresh every 30 seconds
+// Auto-refresh countdown
+let refreshTime = 30;
+const timerElement = document.getElementById('refresh-timer');
+
 setInterval(() => {
-  location.reload();
-}, 30000);
+  refreshTime--;
+  timerElement.textContent = refreshTime;
+  
+  if (refreshTime <= 0) {
+    location.reload();
+  }
+}, 1000);
+
+// Reset timer on user interaction
+document.addEventListener('click', () => {
+  refreshTime = 30;
+  timerElement.textContent = refreshTime;
+});
 </script>
 </body>
 </html>

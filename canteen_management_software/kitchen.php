@@ -33,7 +33,7 @@ while ($row = mysqli_fetch_assoc($query)) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kitchen Dashboard</title>
+<title>The Hungar Bar Kitchen Dashboard</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 <style>
@@ -106,7 +106,7 @@ while ($row = mysqli_fetch_assoc($query)) {
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
   <div class="container-fluid">
-    <a class="navbar-brand fw-bold" href="#">Kitchen Dashboard</a>
+    <a class="navbar-brand fw-bold" href="#">The Hungar Bar Kitchen Dashboard</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -177,7 +177,7 @@ while ($row = mysqli_fetch_assoc($query)) {
 
 <!-- Footer -->
 <footer class="text-white text-center py-3 mt-auto bg-primary">
-  <p class="mb-0">&copy; 2025 Kitchen Dashboard. All rights reserved.</p>
+  <p class="mb-0">&copy; 2025 The Hungar Bar Kitchen Dashboard. All rights reserved.</p>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
