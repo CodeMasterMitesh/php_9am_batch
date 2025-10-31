@@ -27,9 +27,15 @@
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="#">
+      <a class="nav-link" href="students_list.php">
         <i class="bi bi-people-fill"></i>
         <span>Students List</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="employees.php">
+        <i class="bi bi-person-badge-fill"></i>
+        <span>Employees</span>
       </a>
     </li>
     <li class="nav-item">
