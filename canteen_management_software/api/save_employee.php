@@ -1,5 +1,9 @@
 <?php
 include_once __DIR__ . '/../config/connection.php';
+include_once __DIR__ . '/../includes/auth.php';
+
+require_login();
+require_roles(['admin']);
 
 // Accept POST from employee_form.php
 if($_SERVER['REQUEST_METHOD'] !== 'POST'){

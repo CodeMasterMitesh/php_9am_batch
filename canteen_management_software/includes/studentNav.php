@@ -1,3 +1,11 @@
+<?php
+// Student navigation include: protect student/customer pages
+if (!isset($_SESSION)) { session_start(); }
+if (!isset($_SESSION['user']) || !in_array(strtolower($_SESSION['user']['type'] ?? ''), ['student','customer'], true)) {
+  header('Location: login.php');
+  exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,9 +14,9 @@
   <title>My Orders - The Hunger Bar Café</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/studentStyle.css">
+  <link rel="stylesheet" href="assets/css/main.css">
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100 student-page">
      <!-- Sidebar -->
   <div class="sidebar">
     <div class="sidebar-brand">

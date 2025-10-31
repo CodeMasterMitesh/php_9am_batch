@@ -86,9 +86,9 @@ while ($row = mysqli_fetch_assoc($detailed_query)) {
 <title>The Hungar Bar Kitchen Dashboard</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/employeeStyle.css">
+<link rel="stylesheet" href="assets/css/main.css">
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100 employee-page">
 
 <!-- Navbar -->
 <nav class="navbar navbar-kitchen navbar-expand-lg">

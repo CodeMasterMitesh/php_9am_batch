@@ -1,6 +1,11 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 include_once __DIR__ . '/../config/connection.php';
+include_once __DIR__ . '/../includes/auth.php';
+
+require_login();
+require_roles(['admin']);
+deny_direct_browser_access('../404.php');
 
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $per_page = isset($_GET['per_page']) ? max(1, (int)$_GET['per_page']) : 10;

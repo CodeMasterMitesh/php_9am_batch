@@ -1,9 +1,19 @@
 <?php
 include 'config/connection.php';
+include_once __DIR__ . '/includes/auth.php';
+
+require_login();
+require_roles(['admin']);
 
 // if (!$_SESSION['user'] && !$_SESSION['admin']) {
 //     die('Unauthorized');
 // }
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo 'invalid request';
+    exit;
+}
 
 if (isset($_POST['order_id']) && isset($_POST['status'])) {
     $order_id = $_POST['order_id'];
