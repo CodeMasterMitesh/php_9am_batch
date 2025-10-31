@@ -1,5 +1,8 @@
 <?php
 include 'config/connection.php';
+include_once __DIR__ . '/includes/auth.php';
+require_login();
+require_roles(['admin']);
 include 'includes/nav.php';
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -13,12 +16,6 @@ if($id){
 }
 ?>
 
-<style>
-/* reuse add_items look */
-.form-card { border-radius:12px; box-shadow:0 4px 6px rgba(0,0,0,0.05); }
-.btn-submit { background: linear-gradient(135deg, #198754 0%, #157347 100%); border:none; color:white; }
-</style>
-
 <div class="main-content container py-4">
   <div class="page-header d-flex justify-content-between align-items-center mb-3">
     <div>
@@ -31,6 +28,7 @@ if($id){
   <div class="card form-card">
     <div class="card-body">
       <form action="api/save_employee.php" method="POST" id="empForm">
+        <?php echo csrf_input(); ?>
         <input type="hidden" name="id" value="<?php echo $user ? $user['id'] : ''; ?>">
         <div class="row g-3">
           <div class="col-md-6">

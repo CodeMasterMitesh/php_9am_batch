@@ -1,9 +1,7 @@
 <?php
-// Optional: restrict to kitchen staff login
-if (!isset($_SESSION['user']) || ($_SESSION['user']['type'] != 'employee')) {
-  echo "<script>alert('Unauthorized Access'); location.href='404.php';</script>";
-  exit;
-}
+include_once __DIR__ . '/includes/auth.php';
+require_login();
+require_roles(['employee']);
 
 // Update order status via AJAX
 if (isset($_POST['order_id']) && isset($_POST['status'])) {

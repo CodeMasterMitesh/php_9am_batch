@@ -1,18 +1,7 @@
 <?php
 include 'config/connection.php';
-
-// Debug session data if needed
-// debug($_SESSION['user']['type']);
-// exit;
-
-// Fixed authorization logic
-if (!isset($_SESSION['user']) || ($_SESSION['user']['type'] != 'student' && $_SESSION['user']['type'] != 'customer')) {
-    echo "<script>
-        alert('Unauthorized');
-        location.href = '404.php';
-    </script>";
-    exit;
-}
+// Use centralized student/customer guard and main.css via studentNav include
+include 'includes/studentNav.php';
 
 // Fetch logged-in user orders with order_items
 $uid = $_SESSION['user']['id'];
@@ -71,7 +60,6 @@ while ($row = mysqli_fetch_assoc($detailed_query)) {
         'total' => $row['total']
     ];
 }
-    include 'includes/studentNav.php';
 ?>
   <!-- Main Content -->
   <div class="orders-container">
@@ -109,17 +97,22 @@ while ($row = mysqli_fetch_assoc($detailed_query)) {
                         default => 'bg-secondary'
                     };
                   ?>
-                  <span class="badge <?php echo $badgeClass; ?>">
-                    <?php echo ucfirst($status); ?>
-                  </span>
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="badge <?php echo $badgeClass; ?>">
+                      <?php echo ucfirst($status); ?>
+                    </span>
+                    <a class="btn btn-light btn-sm" href="invoice.php?id=<?php echo $order['order_id']; ?>&view=pdf" target="_blank">
+                      <i class="bi bi-printer me-1"></i> Print Invoice
+                    </a>
+                  </div>
                 </div>
               </div>
               
               <div class="card-body">
                 <?php foreach ($order['items'] as $item): ?>
                   <div class="order-item d-flex align-items-center mb-3 pb-3 border-bottom">
-                    <img src="<?php echo $item['image']; ?>" alt="<?php echo $item['name']; ?>" 
-                         class="me-3" style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px;"
+        <img src="<?php echo $item['image']; ?>" alt="<?php echo $item['name']; ?>" 
+          class="me-3 order-item-img"
                          onerror="this.src='https://via.placeholder.com/70?text=No+Image'">
                     <div class="item-details flex-grow-1">
                       <div class="item-name fw-bold"><?php echo $item['name']; ?></div>

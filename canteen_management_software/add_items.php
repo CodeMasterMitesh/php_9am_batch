@@ -1,204 +1,9 @@
 <?php 
 include 'config/connection.php';
+include_once __DIR__ . '/includes/auth.php';
+// Admin guard is also in nav.php; this include gives us csrf_input()
 include 'includes/nav.php'; 
 ?>
-  <style>
-   
-    /* Back Button */
-    .btn-back {
-      background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
-      border: none;
-      border-radius: 8px;
-      padding: 0.75rem 1.5rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 6px rgba(108, 117, 125, 0.3);
-      text-decoration: none;
-      color: white;
-    }
-    
-    .btn-back:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(108, 117, 125, 0.4);
-      color: white;
-    }
-    
-    /* Form Card */
-    .form-card {
-      border-radius: 12px;
-      border: none;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-      overflow: hidden;
-    }
-    
-    .form-card .card-header {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-      border-bottom: none;
-      padding: 1.25rem 1.5rem;
-      color: white;
-    }
-    
-    .form-card .card-body {
-      padding: 2rem;
-    }
-    
-    /* Form Styling */
-    .form-label {
-      font-weight: 600;
-      color: #495057;
-      margin-bottom: 0.5rem;
-    }
-    
-    .form-control, .form-select {
-      border-radius: 8px;
-      border: 1px solid #e2e8f0;
-      padding: 0.75rem 1rem;
-      transition: all 0.3s ease;
-    }
-    
-    .form-control:focus, .form-select:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.1);
-    }
-    
-    /* File Upload Styling */
-    .file-upload-container {
-      position: relative;
-    }
-    
-    .file-upload-preview {
-      width: 120px;
-      height: 120px;
-      border: 2px dashed #dee2e6;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 0.5rem;
-      overflow: hidden;
-      background-color: #f8f9fa;
-      transition: all 0.3s ease;
-    }
-    
-    .file-upload-preview:hover {
-      border-color: var(--primary);
-    }
-    
-    .file-upload-preview img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: cover;
-      display: none;
-    }
-    
-    .file-upload-placeholder {
-      text-align: center;
-      color: #6c757d;
-    }
-    
-    .file-upload-placeholder i {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-      display: block;
-    }
-    
-    /* Submit Button */
-    .btn-submit {
-      background: linear-gradient(135deg, #198754 0%, #157347 100%);
-      border: none;
-      border-radius: 8px;
-      padding: 0.75rem 2rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 6px rgba(25, 135, 84, 0.3);
-    }
-    
-    .btn-submit:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(25, 135, 84, 0.4);
-    }
-    
-    /* Form Row Spacing */
-    .form-row {
-      margin-bottom: 1.5rem;
-    }
-    
-    /* Price Input */
-    .price-input {
-      position: relative;
-    }
-    
-    .price-input:before {
-      content: "₹";
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #6c757d;
-      font-weight: 600;
-      z-index: 1;
-    }
-    
-    .price-input .form-control {
-      padding-left: 30px;
-    }
-    
-    /* Status Badge Preview */
-    .status-preview {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      font-weight: 500;
-      margin-top: 0.5rem;
-    }
-    
-    .status-active {
-      background-color: #d4edda;
-      color: #155724;
-    }
-    
-    .status-inactive {
-      background-color: #f8d7da;
-      color: #721c24;
-    }
-    
-    /* Responsive Adjustments */
-    @media (max-width: 768px) {
-      .page-header {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: flex-start;
-      }
-      
-      .form-card .card-body {
-        padding: 1.5rem;
-      }
-    }
-    
-    /* Animation */
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
-    .form-card {
-      animation: fadeIn 0.5s ease-out;
-    }
-  </style>
   <!-- Main Content -->
   <div class="main-content">
     <!-- Page Header -->
@@ -207,7 +12,7 @@ include 'includes/nav.php';
         <h1><i class="bi bi-plus-circle me-2"></i>Add New Item</h1>
         <p>Create a new product for your inventory</p>
       </div>
-      <a href="items.php" class="btn-back">
+  <a href="items.php" class="btn-back-secondary">
         <i class="bi bi-arrow-left"></i>
         Back to Items
       </a>
@@ -220,6 +25,7 @@ include 'includes/nav.php';
       </div>
       <div class="card-body">
         <form action="insertdb.php" method="POST" enctype="multipart/form-data" id="itemForm">
+          <?php echo csrf_input(); ?>
           <input type="hidden" name="db" value="items">
           
           <div class="row g-4">
@@ -314,9 +120,6 @@ include 'includes/nav.php';
     </div>
   </div>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       // Image preview functionality

@@ -1,333 +1,229 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Canteen Payment System</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .invoice-container {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            padding: 30px;
-            margin-top: 20px;
-            display: none;
-        }
-        .invoice-header {
-            border-bottom: 2px solid #e9ecef;
-            padding-bottom: 20px;
-            margin-bottom: 20px;
-        }
-        .invoice-table th {
-            background-color: #f8f9fa;
-        }
-        .invoice-total {
-            background-color: #f8f9fa;
-            font-weight: bold;
-        }
-        .btn-print {
-            background-color: #6c757d;
-            color: white;
-        }
-        .btn-download {
-            background-color: #28a745;
-            color: white;
-        }
-        .modal-content {
-            border: none;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        .checkout-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
-        }
-        .checkout-item:last-child {
-            border-bottom: none;
-        }
-    </style>
-</head>
-<body>
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card shadow">
-                    <div class="card-header bg-primary text-white">
-                        <h3 class="mb-0">Canteen Order System</h3>
-                    </div>
-                    <div class="card-body">
-                        <p class="lead">Click the button below to make a payment and generate an invoice.</p>
-                        <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#checkoutModal">
-                            <i class="fas fa-shopping-cart me-2"></i>Checkout
-                        </button>
+<?php
+// Bootstrap app and guards
+include 'config/connection.php';
+include_once __DIR__ . '/includes/auth.php';
+require_login();
+require_roles(['student','customer']);
+
+// Page meta and assets
+$pageTitle = 'Invoice';
+$bodyClass = 'student-page invoice-page';
+$extraHead = '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">';
+include 'includes/header.php';
+
+// Validate and read order id
+$oid = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+if ($oid <= 0) {
+        echo "<script>alert('Invalid order'); window.location.href='orders.php';</script>";
+        include 'includes/scripts.php';
+        exit;
+}
+
+$uid = $_SESSION['user']['id'];
+
+// Fetch order and ensure it belongs to current user
+$order_sql = "SELECT o.id, o.amt, o.status, o.date, u.firstname, u.lastname
+                            FROM `order` o JOIN users u ON o.uid = u.id
+                            WHERE o.id = ? AND o.uid = ? LIMIT 1";
+$stmt = mysqli_prepare($conn, $order_sql);
+mysqli_stmt_bind_param($stmt, 'ii', $oid, $uid);
+mysqli_stmt_execute($stmt);
+$order_res = mysqli_stmt_get_result($stmt);
+$order = mysqli_fetch_assoc($order_res);
+if (!$order) {
+        echo "<script>alert('Order not found'); window.location.href='orders.php';</script>";
+        include 'includes/scripts.php';
+        exit;
+}
+
+// Fetch order items
+$items_sql = "SELECT i.name, i.image, oi.quantity, oi.price, (oi.quantity * oi.price) as total
+                            FROM order_items oi JOIN items i ON oi.product_id = i.id
+                            WHERE oi.order_id = ?";
+$stmt2 = mysqli_prepare($conn, $items_sql);
+mysqli_stmt_bind_param($stmt2, 'i', $oid);
+mysqli_stmt_execute($stmt2);
+$items_res = mysqli_stmt_get_result($stmt2);
+$items = [];
+while ($r = mysqli_fetch_assoc($items_res)) { $items[] = $r; }
+
+// Totals
+$subtotal = 0.0;
+foreach ($items as $it) { $subtotal += (float)$it['total']; }
+$gst = $subtotal * 0.05; // 5% GST
+$grand = $subtotal + $gst;
+?>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="mb-0">Invoice</h3>
+                <div class="d-flex gap-2">
+                    <button id="printInvoice" class="btn btn-secondary btn-print"><i class="fa fa-print me-1"></i> Print</button>
+                    <button id="downloadInvoice" class="btn btn-success btn-download"><i class="fa fa-file-pdf me-1"></i> Download PDF</button>
+                </div>
+            </div>
+
+            <div class="invoice-container" id="invoiceContainer">
+                <div class="invoice-header">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h4 class="mb-1">The Hunger Bar Café</h4>
+                            <div class="text-muted">Order #<?php echo $order['id']; ?> · <?php echo date('d M Y, h:i A', strtotime($order['date'])); ?></div>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <div><strong>Invoice No:</strong> INV-<?php echo str_pad($order['id'], 5, '0', STR_PAD_LEFT); ?></div>
+                            <div><strong>Status:</strong> <?php echo ucfirst($order['status']); ?></div>
+                        </div>
                     </div>
                 </div>
-                
-                <!-- Invoice Container -->
-                <div class="invoice-container" id="invoiceContainer">
-                    <div class="invoice-header">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h2>INVOICE</h2>
-                                <p class="mb-1"><strong>Invoice #:</strong> <span id="invoiceNumber">INV-001</span></p>
-                                <p class="mb-1"><strong>Date:</strong> <span id="invoiceDate"></span></p>
-                            </div>
-                            <div class="col-md-6 text-end">
-                                <h4>College Canteen</h4>
-                                <p class="mb-1">ABC University Campus</p>
-                                <p class="mb-1">New Delhi, 110001</p>
-                                <p class="mb-1">Phone: +91 9876543210</p>
-                            </div>
-                        </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6>Billed To</h6>
+                        <div><?php echo htmlspecialchars($order['firstname'] . ' ' . $order['lastname']); ?></div>
                     </div>
-                    
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <h5>Bill To:</h5>
-                            <p class="mb-1"><strong id="studentName">Student Name</strong></p>
-                            <p class="mb-1" id="studentId">Student ID: S12345</p>
-                            <p class="mb-1" id="studentCourse">Course: B.Tech Computer Science</p>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <h5>Payment Details:</h5>
-                            <p class="mb-1"><strong>Payment Method:</strong> Cash</p>
-                            <p class="mb-1"><strong>Payment Date:</strong> <span id="paymentDate"></span></p>
-                            <p class="mb-1"><strong>Transaction ID:</strong> <span id="transactionId">TXN-001</span></p>
-                        </div>
+                    <div class="col-md-6 text-md-end">
+                        <h6>Payment Date</h6>
+                        <div id="paymentDate">—</div>
                     </div>
-                    
-                    <div class="table-responsive">
-                        <table class="table table-bordered invoice-table">
-                            <thead>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered invoice-table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th class="text-center" style="width:120px;">Qty</th>
+                                <th class="text-end" style="width:140px;">Price</th>
+                                <th class="text-end" style="width:160px;">Line Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($items as $it): ?>
                                 <tr>
-                                    <th>#</th>
-                                    <th>Item Description</th>
-                                    <th class="text-center">Quantity</th>
-                                    <th class="text-end">Unit Price (₹)</th>
-                                    <th class="text-end">Amount (₹)</th>
+                                    <td><?php echo htmlspecialchars($it['name']); ?></td>
+                                    <td class="text-center"><?php echo (int)$it['quantity']; ?></td>
+                                    <td class="text-end">₹<?php echo number_format((float)$it['price'], 2); ?></td>
+                                    <td class="text-end">₹<?php echo number_format((float)$it['total'], 2); ?></td>
                                 </tr>
-                            </thead>
-                            <tbody id="invoiceItems">
-                                <!-- Invoice items will be populated here -->
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="4" class="text-end"><strong>Subtotal:</strong></td>
-                                    <td class="text-end"><strong id="invoiceSubtotal">0.00</strong></td>
-                                </tr>
-                                <tr>
-                                    <td colspan="4" class="text-end"><strong>GST (5%):</strong></td>
-                                    <td class="text-end"><strong id="invoiceGst">0.00</strong></td>
-                                </tr>
-                                <tr class="invoice-total">
-                                    <td colspan="4" class="text-end"><strong>Total:</strong></td>
-                                    <td class="text-end"><strong id="invoiceTotal">0.00</strong></td>
-                                </tr>
-                            </tfoot>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6"></div>
+                    <div class="col-md-6">
+                        <table class="table table-sm invoice-total">
+                            <tr>
+                                <td>Subtotal</td>
+                                <td class="text-end">₹<span id="invoiceSubtotal"><?php echo number_format($subtotal, 2); ?></span></td>
+                            </tr>
+                            <tr>
+                                <td>GST (5%)</td>
+                                <td class="text-end">₹<span id="invoiceGst"><?php echo number_format($gst, 2); ?></span></td>
+                            </tr>
+                            <tr>
+                                <th>Total</th>
+                                <th class="text-end">₹<span id="invoiceTotal"><?php echo number_format($grand, 2); ?></span></th>
+                            </tr>
                         </table>
                     </div>
-                    
-                    <div class="row mt-4">
-                        <div class="col-md-12">
-                            <p class="mb-1"><strong>Payment Terms:</strong></p>
-                            <p class="mb-1">Payment is due within 15 days. Please make checks payable to College Canteen.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="row mt-4">
-                        <div class="col-md-12 text-center">
-                            <p>Thank you for your business!</p>
-                        </div>
-                    </div>
-                    
-                    <div class="row mt-4">
-                        <div class="col-md-12 text-center">
-                            <button class="btn btn-print me-2" id="printInvoice">
-                                <i class="fas fa-print me-1"></i>Print Invoice
-                            </button>
-                            <button class="btn btn-download" id="downloadInvoice">
-                                <i class="fas fa-download me-1"></i>Download PDF
-                            </button>
-                        </div>
-                    </div>
                 </div>
+
+                <div class="text-center text-muted">Thank you for your order!</div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Checkout Modal -->
-    <div class="modal fade checkout-modal" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content rounded-3 shadow">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="checkoutModalLabel">Complete Your Payment</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <form id="paymentForm" action="" method="POST">
-                    <input type="hidden" name="uid" value="12345">
-                    <input type="hidden" name="place_order" value="1">
-                    <div class="modal-body">
-                        <div id="checkoutItems">
-                            <!-- Sample items for demonstration -->
-                            <div class="checkout-item">
-                                <span>Veg Burger</span>
-                                <span>₹80.00 × 2</span>
-                            </div>
-                            <div class="checkout-item">
-                                <span>French Fries</span>
-                                <span>₹60.00 × 1</span>
-                            </div>
-                            <div class="checkout-item">
-                                <span>Cold Coffee</span>
-                                <span>₹50.00 × 2</span>
-                            </div>
-                        </div>
-                        <div class="mb-3 mt-3">
-                            <label class="form-label">Total Amount (₹)</label>
-                            <input type="number" class="form-control" id="totalAmount" name="totalAmount" value="330" readonly>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-success">Pay Now</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+<!-- Use compatible versions of jsPDF and html2canvas -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set payment date (today)
+        const now = new Date();
+        const pad = n => String(n).padStart(2, '0');
+        const fmt = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()}`;
+        const paymentDate = document.getElementById('paymentDate');
+        if (paymentDate) paymentDate.textContent = fmt;
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- jsPDF for PDF generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set current date for invoice
-            const now = new Date();
-            document.getElementById('invoiceDate').textContent = formatDate(now);
-            document.getElementById('paymentDate').textContent = formatDate(now);
+        // Print button
+        const printBtn = document.getElementById('printInvoice');
+        if (printBtn) printBtn.addEventListener('click', () => window.print());
+
+        // PDF generation helper - Simplified version
+        function renderPdf(openInNewTab = false) {
+            const element = document.getElementById('invoiceContainer');
             
-            // Handle payment form submission
-            document.getElementById('paymentForm').addEventListener('submit', function(e) {
-                e.preventDefault();
+            // Simple html2canvas configuration
+            html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/jpeg', 1.0);
                 
-                // Close the modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('checkoutModal'));
-                modal.hide();
+                // Calculate PDF dimensions
+                const imgWidth = 210; // A4 width in mm
+                const pageHeight = 295; // A4 height in mm
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
                 
-                // Generate invoice
-                generateInvoice();
-            });
-            
-            // Print invoice functionality
-            document.getElementById('printInvoice').addEventListener('click', function() {
-                window.print();
-            });
-            
-            // Download PDF functionality
-            document.getElementById('downloadInvoice').addEventListener('click', function() {
-                downloadPDF();
-            });
-            
-            // Format date function
-            function formatDate(date) {
-                const day = String(date.getDate()).padStart(2, '0');
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const year = date.getFullYear();
-                return `${day}/${month}/${year}`;
-            }
-            
-            // Generate invoice function
-            function generateInvoice() {
-                // Get checkout items
-                const checkoutItems = document.getElementById('checkoutItems').children;
+                let heightLeft = imgHeight;
+                let position = 0;
                 
-                // Populate invoice items
-                const invoiceItems = document.getElementById('invoiceItems');
-                invoiceItems.innerHTML = '';
+                // Create PDF
+                const doc = new jsPDF('p', 'mm', 'a4');
                 
-                let subtotal = 0;
+                // Add first page
+                doc.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
                 
-                for (let i = 0; i < checkoutItems.length; i++) {
-                    const item = checkoutItems[i];
-                    const itemText = item.children[0].textContent;
-                    const itemDetails = item.children[1].textContent;
-                    
-                    // Parse item details (assuming format: "₹price × quantity")
-                    const priceMatch = itemDetails.match(/₹(\d+\.?\d*)/);
-                    const quantityMatch = itemDetails.match(/×\s*(\d+)/);
-                    
-                    if (priceMatch && quantityMatch) {
-                        const price = parseFloat(priceMatch[1]);
-                        const quantity = parseInt(quantityMatch[1]);
-                        const amount = price * quantity;
-                        subtotal += amount;
-                        
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${i + 1}</td>
-                            <td>${itemText}</td>
-                            <td class="text-center">${quantity}</td>
-                            <td class="text-end">${price.toFixed(2)}</td>
-                            <td class="text-end">${amount.toFixed(2)}</td>
-                        `;
-                        invoiceItems.appendChild(row);
-                    }
+                // Add additional pages if content is too long
+                while (heightLeft > 0) {
+                    position = heightLeft - imgHeight;
+                    doc.addPage();
+                    doc.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
                 }
                 
-                // Calculate GST and total
-                const gst = subtotal * 0.05;
-                const total = subtotal + gst;
-                
-                // Update invoice totals
-                document.getElementById('invoiceSubtotal').textContent = subtotal.toFixed(2);
-                document.getElementById('invoiceGst').textContent = gst.toFixed(2);
-                document.getElementById('invoiceTotal').textContent = total.toFixed(2);
-                
-                // Generate random invoice and transaction numbers
-                const invoiceNumber = 'INV-' + Math.floor(1000 + Math.random() * 9000);
-                const transactionId = 'TXN-' + Math.floor(10000 + Math.random() * 90000);
-                
-                document.getElementById('invoiceNumber').textContent = invoiceNumber;
-                document.getElementById('transactionId').textContent = transactionId;
-                
-                // Show the invoice
-                document.getElementById('invoiceContainer').style.display = 'block';
-                
-                // Scroll to invoice
-                document.getElementById('invoiceContainer').scrollIntoView({ behavior: 'smooth' });
-            }
-            
-            // Download PDF function
-            function downloadPDF() {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                
-                // Get invoice content
-                const invoiceElement = document.getElementById('invoiceContainer');
-                
-                // Use html2canvas to capture the invoice as an image
-                html2canvas(invoiceElement).then(canvas => {
-                    const imgData = canvas.toDataURL('image/png');
-                    const imgWidth = doc.internal.pageSize.getWidth();
-                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                if (openInNewTab) {
+                    // Open PDF in new tab
+                    const pdfBlob = doc.output('blob');
+                    const pdfUrl = URL.createObjectURL(pdfBlob);
+                    window.open(pdfUrl, '_blank');
                     
-                    doc.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-                    doc.save('invoice-' + document.getElementById('invoiceNumber').textContent + '.pdf');
-                });
-            }
-        });
-    </script>
-</body>
-</html>
+                    // Clean up URL after some time
+                    setTimeout(() => {
+                        URL.revokeObjectURL(pdfUrl);
+                    }, 1000);
+                } else {
+                    // Download PDF
+                    doc.save('invoice-<?php echo (int)$order['id']; ?>.pdf');
+                }
+            }).catch(err => {
+                console.error('PDF generation failed:', err);
+                alert('Failed to generate PDF. Please try again or use the print function.');
+            });
+        }
+
+        // Download PDF button
+        const dlBtn = document.getElementById('downloadInvoice');
+        if (dlBtn) dlBtn.addEventListener('click', () => renderPdf(false));
+
+        // Auto action via URL: view=pdf or view=print
+        const params = new URLSearchParams(window.location.search);
+        const view = params.get('view');
+        if (view === 'pdf') {
+            renderPdf(true);
+        } else if (view === 'print') {
+            window.print();
+        }
+    });
+</script>
+
+<?php include 'includes/scripts.php'; ?>

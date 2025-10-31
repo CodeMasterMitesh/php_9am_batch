@@ -1,10 +1,8 @@
 <?php
 include 'config/connection.php';
-// Optional: restrict to kitchen staff login
-if (!isset($_SESSION['user']) || ($_SESSION['user']['type'] != 'employee')) {
-  echo "<script>alert('Unauthorized Access'); location.href='404.php';</script>";
-  exit;
-}
+include_once __DIR__ . '/includes/auth.php';
+require_login();
+require_roles(['employee']);
 
 // Update order status via AJAX
 if (isset($_POST['order_id']) && isset($_POST['status'])) {
@@ -36,72 +34,9 @@ while ($row = mysqli_fetch_assoc($query)) {
 <title>The Hungar Bar Kitchen Dashboard</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-<style>
-  body {
-    background: #f8f9fa;
-    font-family: 'Poppins', sans-serif;
-  }
-  .navbar {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
-  h2 {
-    font-weight: 600;
-    color: #343a40;
-  }
-  .kanban-board {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  .kanban-column {
-    flex: 1;
-    min-width: 300px;
-    background: #fff;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
-  .kanban-column h4 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-weight: 600;
-    color: #0d6efd;
-  }
-  .order-card {
-    background: #fff;
-    border: 1px solid #e9ecef;
-    border-radius: 14px;
-    padding: 12px;
-    margin-bottom: 15px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-    transition: all 0.2s ease;
-  }
-  .order-card:hover {
-    transform: translateY(-3px);
-  }
-  .order-card img {
-    width: 100%;
-    height: 150px;
-    border-radius: 10px;
-    object-fit: cover;
-  }
-  .order-title {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-top: 10px;
-  }
-  .status-btn {
-    font-size: 0.85rem;
-    border-radius: 10px;
-    padding: 5px 10px;
-  }
-  .status-btn.received { background-color: #ffc107; color: #000; }
-  .status-btn.preparing { background-color: #17a2b8; color: #fff; }
-  .status-btn.delivered { background-color: #28a745; color: #fff; }
-</style>
+<link rel="stylesheet" href="assets/css/main.css">
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100 kitchen-page">
 
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">

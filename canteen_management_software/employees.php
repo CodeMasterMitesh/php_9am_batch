@@ -3,14 +3,6 @@ include 'config/connection.php';
 include 'includes/nav.php';
 ?>
 
-<style>
-/* reuse styles from add_items.php for consistency */
-.page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
-.btn-add { background: linear-gradient(135deg, #198754 0%, #157347 100%); border:none; color:white; padding:0.6rem 1rem; border-radius:8px; }
-.card-list { border-radius:12px; box-shadow:0 4px 6px rgba(0,0,0,0.05); }
-.table th, .table td { vertical-align: middle; }
-</style>
-
 <div class="main-content container py-4">
   <div class="page-header">
     <div>
@@ -18,7 +10,7 @@ include 'includes/nav.php';
       <p class="text-muted">Manage employee accounts</p>
     </div>
     <div class="d-flex gap-2">
-      <a href="employee_form.php" class="btn btn-add"><i class="bi bi-plus-circle me-1"></i> Add Employee</a>
+  <a href="employee_form.php" class="btn btn-add"><i class="bi bi-plus-circle me-1"></i> Add Employee</a>
     </div>
   </div>
 

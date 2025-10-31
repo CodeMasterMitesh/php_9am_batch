@@ -7,8 +7,8 @@ include 'includes/nav.php';
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h3>Students / Users</h3>
     <div class="d-flex gap-2">
-      <input id="searchInput" class="form-control" placeholder="Search by name or email..." style="min-width:300px">
-      <select id="perPage" class="form-select" style="width:110px">
+      <input id="searchInput" class="form-control minw-300" placeholder="Search by name or email...">
+      <select id="perPage" class="form-select w-110">
         <option value="5">5 / page</option>
         <option value="10" selected>10 / page</option>
         <option value="25">25 / page</option>

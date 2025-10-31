@@ -11,8 +11,15 @@ if($_SERVER['REQUEST_METHOD'] !== 'POST'){
     exit;
 }
 
+// CSRF validation
+if (!verify_csrf_from_post()) {
+    echo "<script>alert('Invalid CSRF token. Please try again.'); history.back();</script>";
+    exit;
+}
+
 $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
 $firstname = isset($_POST['firstname']) ? trim($_POST['firstname']) : '';
+$username = isset($_POST['firstname']) ? trim($_POST['firstname']) : '';
 $email = isset($_POST['email']) ? trim($_POST['email']) : '';
 $password = isset($_POST['password']) ? $_POST['password'] : '';
 $status = isset($_POST['status']) && $_POST['status'] === 'inactive' ? 'inactive' : 'active';
@@ -60,8 +67,8 @@ if($id){
     if(!$password){ echo "<script>alert('Password is required'); history.back();</script>"; exit; }
     $hash = password_hash($password, PASSWORD_DEFAULT);
     $type = 'employee';
-    $stmt = mysqli_prepare($conn, "INSERT INTO users (firstname, email, password, type, status) VALUES (?,?,?,?,?)");
-    mysqli_stmt_bind_param($stmt, 'sssss', $firstname, $email, $hash, $type, $status);
+    $stmt = mysqli_prepare($conn, "INSERT INTO users (firstname, username, email, password, type, status) VALUES (?,?,?,?,?,?)");
+    mysqli_stmt_bind_param($stmt, 'ssssss', $firstname, $username, $email, $hash, $type, $status);
     $ok = mysqli_stmt_execute($stmt);
     if($ok){ echo "<script>alert('Employee added'); location.href='../employees.php';</script>"; exit; }
     else { echo "<script>alert('Insert failed'); history.back();</script>"; exit; }

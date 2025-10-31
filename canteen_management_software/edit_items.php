@@ -1,146 +1,19 @@
 <?php 
 include 'config/connection.php';
+include_once __DIR__ . '/includes/auth.php';
 include 'includes/nav.php';
-$pid = $_GET['id'];
+$pid = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+if ($pid <= 0) {
+  echo "<script>alert('Invalid item id'); window.location.href='items.php';</script>";
+  exit;
+}
 
 $sql = "SELECT * FROM items where id = $pid";
 $query = mysqli_query($conn,$sql);
 $row = mysqli_fetch_assoc($query);
 
 ?>
-  <style>
-    a{
-      text-decoration:none;
-    }
-    /* Status Preview for Edit Page */
-    .status-preview-edit {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      font-weight: 500;
-      margin-top: 0.5rem;
-      transition: all 0.3s ease;
-    }
-    
-    /* Current Image Preview */
-    .current-image-container {
-      margin-top: 1rem;
-      text-align: center;
-    }
-    
-    .current-image-label {
-      font-size: 0.875rem;
-      color: #6c757d;
-      margin-bottom: 0.5rem;
-      display: block;
-    }
-    
-    .current-image {
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 2px solid #e9ecef;
-      transition: all 0.3s ease;
-    }
-    
-    .current-image:hover {
-      transform: scale(1.8);
-      z-index: 10;
-      position: relative;
-      border-color: var(--primary);
-    }
-    
-    /* Update Button Specific */
-    .btn-update {
-      background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%);
-      border: none;
-      border-radius: 8px;
-      padding: 0.75rem 2rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 6px rgba(253, 126, 20, 0.3);
-    }
-    
-    .btn-update:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(253, 126, 20, 0.4);
-      color: white;
-    }
-    
-    /* Form Section Enhancements */
-    .form-section-edit {
-      border-left: 4px solid var(--primary);
-      padding-left: 1rem;
-      margin: 1.5rem 0;
-    }
-    
-    .form-section-edit h6 {
-      color: var(--primary);
-      font-weight: 600;
-    }
-    
-    /* Read-only Fields Styling */
-    .form-control[readonly] {
-      background-color: #f8f9fa;
-      border-color: #e9ecef;
-      color: #6c757d;
-    }
-    
-    /* Image Comparison */
-    .image-comparison {
-      display: flex;
-      gap: 1rem;
-      align-items: flex-start;
-      margin-top: 1rem;
-    }
-    
-    .image-box {
-      text-align: center;
-      flex: 1;
-    }
-    
-    .image-box h6 {
-      font-size: 0.875rem;
-      color: #495057;
-      margin-bottom: 0.5rem;
-    }
-    
-    /* Success State for Form */
-    .form-control.success {
-      border-color: #198754;
-      box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.1);
-    }
-    
-    /* Warning State for Low Stock */
-    .stock-warning {
-      color: #dc3545;
-      font-weight: 600;
-      animation: pulse 2s infinite;
-    }
-    
-    @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.7; }
-      100% { opacity: 1; }
-    }
-    
-    /* Responsive Image Layout */
-    @media (max-width: 768px) {
-      .image-comparison {
-        flex-direction: column;
-      }
-      
-      .current-image:hover {
-        transform: scale(1.2);
-      }
-    }
-  </style>
   <!-- Main Content -->
   <div class="main-content">
     <!-- Page Header -->
@@ -149,7 +22,7 @@ $row = mysqli_fetch_assoc($query);
         <h1><i class="bi bi-pencil-square me-2"></i>Edit Item</h1>
         <p>Update product information and inventory details</p>
       </div>
-      <a href="items.php" class="btn-back text-white">
+      <a href="items.php" class="btn-back-secondary text-white">
         <i class="bi bi-arrow-left"></i>
         Back to Items
       </a>
@@ -162,6 +35,7 @@ $row = mysqli_fetch_assoc($query);
       </div>
       <div class="card-body">
         <form action="updatedb.php" method="POST" enctype="multipart/form-data" id="editItemForm">
+          <?php echo csrf_input(); ?>
           <input type="hidden" name="db" value="items">
           <input type="hidden" name="id" value="<?php echo $pid; ?>">
           
@@ -299,10 +173,10 @@ $row = mysqli_fetch_assoc($query);
                   </a>
                 </div>
                 <div class="d-flex gap-2">
-                  <a href="deletedb.php?id=<?php echo $pid; ?>&db=items" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this item?')">
+                  <button type="button" id="deleteBtn" class="btn btn-danger">
                     <i class="bi bi-trash me-2"></i>
                     Delete
-                  </a>
+                  </button>
                   <button type="submit" class="btn btn-update text-white">
                     <i class="bi bi-check-circle me-2"></i>
                     Update Item
@@ -316,9 +190,13 @@ $row = mysqli_fetch_assoc($query);
     </div>
   </div>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  
+  <!-- Hidden delete form to avoid nested forms -->
+  <form id="deleteItemForm" action="deletedb.php" method="POST" class="d-none">
+    <?php echo csrf_input(); ?>
+    <input type="hidden" name="db" value="items">
+    <input type="hidden" name="id" value="<?php echo $pid; ?>">
+  </form>
+
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       // Image preview functionality for new image
@@ -389,6 +267,16 @@ $row = mysqli_fetch_assoc($query);
           control.classList.add('success');
         }
       });
+
+      // Delete button handler
+      const deleteBtn = document.getElementById('deleteBtn');
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', function() {
+          if (confirm('Are you sure you want to delete this item?')) {
+            document.getElementById('deleteItemForm').submit();
+          }
+        });
+      }
     });
   </script>
 <?php include 'includes/footer.php'; ?>

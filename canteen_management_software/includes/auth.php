@@ -72,4 +72,35 @@ function deny_direct_browser_access(string $redirect = '../404.php'): void {
     }
 }
 
+// CSRF helpers
+function csrf_token(): string {
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+function csrf_input(): string {
+    $t = htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8');
+    return '<input type="hidden" name="_csrf" value="' . $t . '">';
+}
+
+function verify_csrf_from_post(): bool {
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+    if (!isset($_POST['_csrf'], $_SESSION['csrf_token'])) {
+        return false;
+    }
+    $ok = hash_equals((string)$_SESSION['csrf_token'], (string)$_POST['_csrf']);
+    // Optionally rotate token after successful check
+    if ($ok) {
+        unset($_SESSION['csrf_token']);
+    }
+    return $ok;
+}
+
 ?>

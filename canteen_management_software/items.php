@@ -1,5 +1,6 @@
 <?php 
 include 'config/connection.php';
+include_once __DIR__ . '/includes/auth.php';
 include 'includes/nav.php'; 
 ?>
   <!-- Main Content -->
@@ -98,9 +99,14 @@ include 'includes/nav.php';
                           <a href="edit_items.php?id=<?php echo $row['id']; ?>" class="btn-action btn-edit" title="Edit Item">
                             <i class="bi bi-pencil-square"></i>
                           </a>
-                          <a href="deletedb.php?id=<?php echo $row['id']; ?>&db=items" class="btn-action btn-delete" title="Delete Item" onclick="return confirm('Are you sure you want to delete this item?')">
-                            <i class="bi bi-trash"></i>
-                          </a>
+                          <form action="deletedb.php" method="POST" onsubmit="return confirm('Are you sure you want to delete this item?')" class="d-inline">
+                            <?php echo csrf_input(); ?>
+                            <input type="hidden" name="db" value="items">
+                            <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                            <button type="submit" class="btn-action btn-delete" title="Delete Item">
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </form>
                         </div>
                       </td>
                     </tr>
@@ -125,9 +131,6 @@ include 'includes/nav.php';
     </div>
   </div>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  
   <script>
     // Add some interactive functionality
     document.addEventListener('DOMContentLoaded', function() {

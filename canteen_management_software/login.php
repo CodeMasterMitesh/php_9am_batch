@@ -68,16 +68,7 @@
   }
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<?php $pageTitle = 'Login'; include 'includes/header.php'; ?>
   <style>
     :root {
       --primary: #6F1D1B;       /* Rich Deep Brown (matches logo tone) */
@@ -304,8 +295,7 @@
       }
     }
   </style>
-</head>
-<body>
+  </style>
 
   <div class="login-container">
     <div class="login-card">
@@ -377,9 +367,6 @@
     </div>
   </div>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  
   <script>
     // Add some interactive functionality
     document.addEventListener('DOMContentLoaded', function() {
@@ -404,5 +391,4 @@
       });
     });
   </script>
-</body>
-</html>
+<?php include 'includes/scripts.php'; ?>
