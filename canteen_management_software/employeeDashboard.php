@@ -1,6 +1,6 @@
 <?php
 // Optional: restrict to kitchen staff login
-if (!$_SESSION['employee']) {
+if (!isset($_SESSION['user']) || ($_SESSION['user']['type'] != 'employee')) {
   echo "<script>alert('Unauthorized Access'); location.href='404.php';</script>";
   exit;
 }
@@ -100,7 +100,7 @@ while ($row = mysqli_fetch_assoc($detailed_query)) {
     <div class="navbar-nav ms-auto">
       <span class="navbar-text text-white me-3">
         <i class="bi bi-person-circle me-1"></i>
-        <?php echo $_SESSION['employee']['firstname']; ?>
+        <?php echo $_SESSION['user']['firstname']; ?>
       </span>
       <span class="navbar-text text-white me-3">
         <i class="bi bi-clock me-1"></i>

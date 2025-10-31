@@ -1,18 +1,17 @@
 <?php
 include 'config/connection.php';
+ini_set('display_errors', '1');
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
-    // debug($_POST);
-     // --- Handle file upload dynamically ---
+    $db = $_POST['db'];
+    $id = $_POST['id'];
+    $exclude = ['db', 'id', 'submit']; // keys to exclude
+
+    // --- Handle file upload dynamically ---
     foreach ($_FILES as $key => $file) {
         if ($file['error'] !== UPLOAD_ERR_NO_FILE) {
             // Check for PHP upload errors
-            // debug($_FILES);
-            // debug($file);
-            // debug($file['error']);
-            // debug(UPLOAD_ERR_INI_SIZE);
-            // exit;
             switch ($file['error']) {
                 case UPLOAD_ERR_OK:
                     // No problem, continue to upload
@@ -59,38 +58,50 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                     exit;
             }
         } else {
-            // No file uploaded for this field — just skip
+            // No file uploaded for this field — keep existing value (don't unset)
+            // We'll handle this in the update query by not including unchanged file fields
             unset($_POST[$key]);
         }
     }
 
-    $id = $_POST['id'];
-    $db = $_POST['db'];
-    $name = $_POST['name'];
-    $category = $_POST['category'];
-    $price = $_POST['price'];
-    $stockqty = $_POST['stockqty'];
-    $remarks = $_POST['remarks'];
-    $status = $_POST['status'];
-    $image = $targetFile;
+    // --- Remove unwanted keys from POST ---
+    $data = array_diff_key($_POST, array_flip($exclude));
 
-    $sql = "UPDATE $db SET name = '$name',category = '$category',price = '$price',
-    image='$targetFile',stockqty = '$stockqty',remarks = '$remarks',status = '$status' WHERE id = $id";
-    $query = mysqli_query($conn,$sql);
-    // echo $sql;
+    // --- Build SET clause dynamically ---
+    $setParts = [];
+    foreach ($data as $key => $value) {
+        $escapedValue = mysqli_real_escape_string($conn, $value);
+        $setParts[] = "`$key` = '$escapedValue'";
+    }
+
+    // If no fields to update (only file fields that weren't changed)
+    if (empty($setParts)) {
+        echo "<script>
+            alert('No changes to update!');
+            window.location.href = '$db.php';
+        </script>";
+        exit;
+    }
+
+    $setClause = implode(", ", $setParts);
+
+    // --- Build and execute UPDATE query ---
+    $sql = "UPDATE $db SET $setClause WHERE id = '$id'";
+    // echo $sql; exit; // Uncomment for debugging
+
+    $query = mysqli_query($conn, $sql);
 
     if ($query) {
         echo "<script>
-            alert('Data Update successfully!');
+            alert('Data updated successfully!');
             window.location.href = '$db.php';
         </script>";
     } else {
         echo "<script>
             alert('Error: " . mysqli_error($conn) . "');
-            window.location.href = '$db.php';
+            window.location.back();
         </script>";
     }
     exit;
 }
-
 ?>

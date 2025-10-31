@@ -1,14 +1,22 @@
 <?php
 include 'config/connection.php';
-if (!$_SESSION['student']) {
+
+// Debug session data if needed
+// debug($_SESSION['user']['type']);
+// exit;
+
+// Fixed authorization logic
+if (!isset($_SESSION['user']) || ($_SESSION['user']['type'] != 'student' && $_SESSION['user']['type'] != 'customer')) {
     echo "<script>
         alert('Unauthorized');
         location.href = '404.php';
     </script>";
+    exit;
 }
 
 // Fetch logged-in user orders with order_items
-$uid = $_SESSION['student']['id'];
+$uid = $_SESSION['user']['id'];
+
 $sql = "SELECT 
           o.id as order_id,
           o.amt,
@@ -63,8 +71,8 @@ while ($row = mysqli_fetch_assoc($detailed_query)) {
         'total' => $row['total']
     ];
 }
+    include 'includes/studentNav.php';
 ?>
-<?php include 'includes/studentNav.php'; ?>
   <!-- Main Content -->
   <div class="orders-container">
     <!-- Page Header -->
@@ -79,9 +87,9 @@ while ($row = mysqli_fetch_assoc($detailed_query)) {
     <?php if (!empty($orders)): ?>
       <div class="row">
         <?php foreach ($orders as $order): ?>
-          <div class="col-12">
-            <div class="card order-card">
-              <div class="order-header">
+          <div class="col-12 mb-4">
+            <div class="card order-card shadow-sm">
+              <div class="card-header bg-primary text-white">
                 <div class="d-flex justify-content-between align-items-center">
                   <div>
                     <h5 class="mb-1">Order #<?php echo $order['order_id']; ?></h5>
@@ -92,29 +100,30 @@ while ($row = mysqli_fetch_assoc($detailed_query)) {
                   <?php
                     $status = strtolower($order['status'] ?? 'pending');
                     $badgeClass = match($status) {
-                        'pending' => 'status-pending',
-                        'received' => 'status-received',
-                        'preparing' => 'status-preparing',
-                        'ready' => 'status-ready',
-                        'delivered' => 'status-delivered',
-                        'cancelled' => 'status-cancelled',
-                        default => 'status-pending'
+                        'pending' => 'bg-warning',
+                        'received' => 'bg-info',
+                        'preparing' => 'bg-primary',
+                        'ready' => 'bg-success',
+                        'delivered' => 'bg-success',
+                        'cancelled' => 'bg-danger',
+                        default => 'bg-secondary'
                     };
                   ?>
-                  <span class="badge badge-status <?php echo $badgeClass; ?>">
+                  <span class="badge <?php echo $badgeClass; ?>">
                     <?php echo ucfirst($status); ?>
                   </span>
                 </div>
               </div>
               
-              <div class="order-body">
+              <div class="card-body">
                 <?php foreach ($order['items'] as $item): ?>
-                  <div class="order-item">
+                  <div class="order-item d-flex align-items-center mb-3 pb-3 border-bottom">
                     <img src="<?php echo $item['image']; ?>" alt="<?php echo $item['name']; ?>" 
+                         class="me-3" style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px;"
                          onerror="this.src='https://via.placeholder.com/70?text=No+Image'">
-                    <div class="item-details">
-                      <div class="item-name"><?php echo $item['name']; ?></div>
-                      <div class="item-meta">
+                    <div class="item-details flex-grow-1">
+                      <div class="item-name fw-bold"><?php echo $item['name']; ?></div>
+                      <div class="item-meta text-muted">
                         Quantity: <?php echo $item['quantity']; ?> | 
                         Price: ₹<?php echo $item['price']; ?> | 
                         Amount: ₹<?php echo $item['total']; ?>
@@ -123,12 +132,12 @@ while ($row = mysqli_fetch_assoc($detailed_query)) {
                   </div>
                 <?php endforeach; ?>
                 
-                <div class="order-footer">
+                <div class="order-footer mt-3 pt-3 border-top">
                   <div class="d-flex justify-content-between align-items-center">
                     <div>
-                      <span class="total-amount">Total: ₹<?php echo $order['total']; ?></span>
+                      <span class="total-amount fw-bold fs-5">Total: ₹<?php echo $order['total']; ?></span>
                     </div>
-                    <div class="order-count">
+                    <div class="order-count text-muted">
                       <?php echo count($order['items']); ?> item(s) in this order
                     </div>
                   </div>
@@ -139,14 +148,16 @@ while ($row = mysqli_fetch_assoc($detailed_query)) {
         <?php endforeach; ?>
       </div>
     <?php else: ?>
-      <div class="empty-state">
-        <i class="bi bi-bag-x"></i>
-        <h4>No orders yet</h4>
-        <p>You haven't placed any orders yet. Start exploring our menu!</p>
-        <a href="menu.php" class="btn browse-menu-btn">
+      <div class="empty-state text-center py-5">
+        <i class="bi bi-bag-x display-1 text-muted"></i>
+        <h4 class="mt-3">No orders yet</h4>
+        <p class="text-muted">You haven't placed any orders yet. Start exploring our menu!</p>
+        <a href="menu.php" class="btn btn-primary mt-3">
           <i class="bi bi-arrow-right me-2"></i>Browse Menu
         </a>
       </div>
     <?php endif; ?>
   </div>
-<?php include 'includes/footer.php'; ?>
+<?php 
+    include 'includes/footer.php';
+?>

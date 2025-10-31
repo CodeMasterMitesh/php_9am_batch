@@ -1,7 +1,7 @@
 <?php
 include 'config/connection.php';
 
-$uid = $_SESSION['student']['id'];
+$uid = $_SESSION['user']['id'];
 
 $action = $_POST['action'];
 

@@ -1,12 +1,12 @@
 <?php
   include_once 'config/connection.php';
   // ini_set('display_errors', '1');
-  // debug($_SESSION['admin']);
-  $key = array_key_first($_SESSION);
+  // debug($_SESSION);
+  $key = $_SESSION['user']['type'];
   // echo $key;
   // exit;
   if($key == 'admin'){
-    if(!$_SESSION['admin']){
+    if(!$_SESSION['user']){
         echo "<script>
         alert('Unauthorized');
         location.href = '404.php';
@@ -14,7 +14,7 @@
     }
     include 'adminDashboard.php';
   }else if($key == 'student'){
-    if(!$_SESSION['student']){
+    if(!$_SESSION['user']){
         echo "<script>
         alert('Unauthorized');
         location.href = '404.php';
@@ -22,7 +22,7 @@
     }
     include 'studentDashboard.php';
   }else if($key == 'employee'){
-    if(!$_SESSION['employee']){
+    if(!$_SESSION['user']){
         echo "<script>
         alert('Unauthorized');
         location.href = '404.php';
@@ -30,8 +30,8 @@
     }
     include 'employeeDashboard.php';
   }else{
-    // Redirect to login.php
-    header("Location: canteen_management_software/login.php");
+    // Redirect to home.php
+    header("Location: home.php");
     exit();
   }
 ?>

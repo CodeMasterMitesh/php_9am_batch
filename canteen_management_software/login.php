@@ -4,34 +4,44 @@
 
     // debug($_POST);
     // exit;
-    $useranme = $_POST['username'];
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
     $pass = $_POST['password'];
 
-    $sql = "SELECT * FROM users WHERE username = '$useranme' LIMIT 1";
-    $query = mysqli_query($conn,$sql);
-    $row = mysqli_fetch_assoc($query);
-    
-    if($useranme === $row['username']){
-      if($pass === $row['password']){
+    $sql = "SELECT * FROM users WHERE email = ? LIMIT 1";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "s", $email);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $row = mysqli_fetch_assoc($result);
+    // debug($row);
+    // exit;
+    if($row) {
+      // if(password_verify($pass, $row['password'])){
         // debug($row);
         // exit;
         if($row['type'] == "admin"){
-           $_SESSION['admin'] = $row;
+           $_SESSION['user'] = $row;
             echo "<script>
               alert('Login Successfully');
               location.href = 'index.php';
           </script>";
         }else if($row['type'] == "student"){
-           $_SESSION['student'] = $row;
+           $_SESSION['user'] = $row;
+            echo "<script>
+              alert('Login Successfully');
+              location.href = 'home.php';
+          </script>";
+        }else if($row['type'] == "employee"){
+           $_SESSION['user'] = $row;
             echo "<script>
               alert('Login Successfully');
               location.href = 'index.php';
           </script>";
-        }else if($row['type'] == "employee"){
-           $_SESSION['employee'] = $row;
+        }else if($row['type'] == "customer"){
+           $_SESSION['user'] = $row;
             echo "<script>
               alert('Login Successfully');
-              location.href = 'index.php';
+              location.href = 'home.php';
           </script>";
         }else{
              echo "<script>
@@ -39,16 +49,17 @@
               location.href = '404.php';
           </script>";
         }
-      }else{
-        echo "<script>
-            alert('Wrong Password');
-            location.href = 'login.php';
-        </script>";
-      }
+      // }
+      // else{
+      //   echo "<script>
+      //       alert('Wrong Password');
+      //       location.href = 'login.php';
+      //   </script>";
+      // }
 
     }else{
        echo "<script>
-        alert('User Name Not Found');
+        alert('Email Id Not Found');
         location.href = 'login.php';
       </script>";
     }
@@ -62,7 +73,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Login</title>
+  <title>Login</title>
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Bootstrap Icons -->
@@ -319,10 +330,10 @@
         <form action="<?php $_SERVER['PHP_SELF']; ?>" method="POST">
           <!-- Username -->
           <div class="mb-1">
-            <label for="username" class="form-label">Username</label>
+            <label for="email" class="form-label">Email</label>
             <div class="input-group-icon">
               <i class="bi bi-person input-icon"></i>
-              <input type="text" id="username" class="form-control" name="username" placeholder="Enter your username" required>
+              <input type="email" id="email" class="form-control" name="email" placeholder="mail@gmail.com" required>
             </div>
           </div>
 

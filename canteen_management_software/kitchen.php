@@ -1,7 +1,7 @@
 <?php
 include 'config/connection.php';
 // Optional: restrict to kitchen staff login
-if (!$_SESSION['employee']) {
+if (!isset($_SESSION['user']) || ($_SESSION['user']['type'] != 'employee')) {
   echo "<script>alert('Unauthorized Access'); location.href='404.php';</script>";
   exit;
 }

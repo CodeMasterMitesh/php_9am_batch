@@ -1,7 +1,7 @@
 <?php
 include 'config/connection.php';
 
-// if (!$_SESSION['employee'] && !$_SESSION['admin']) {
+// if (!$_SESSION['user'] && !$_SESSION['admin']) {
 //     die('Unauthorized');
 // }
 

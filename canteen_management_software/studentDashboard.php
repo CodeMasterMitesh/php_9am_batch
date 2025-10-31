@@ -1,5 +1,5 @@
 <?php
-if(!$_SESSION['student']){
+if(!isset($_SESSION['user']) || ($_SESSION['user']['type'] != 'student' && $_SESSION['user']['type'] != 'customer')){
     echo "<script>
     alert('Unauthorized');
     location.href = '404.php';
@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['action'])) {
     switch($_POST['action']) {
         case 'add_to_cart':
             $pid = $_POST['pid'];
-            $uid = $_SESSION['student']['id'];
+            $uid = $_SESSION['user']['id'];
             
             // Check if user has an active cart
             $cart_sql = "SELECT id FROM cart WHERE user_id = '$uid'";
@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['action'])) {
             break;
             
         case 'get_cart_count':
-            $uid = $_SESSION['student']['id'];
+            $uid = $_SESSION['user']['id'];
             $count_sql = "SELECT SUM(ci.qty) as total_items 
                          FROM cart_items ci 
                          JOIN cart c ON ci.cart_id = c.id 
@@ -114,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['action'])) {
             break;
 
         case 'add_order':
-        $uid = $_SESSION['student']['id'];
+        $uid = $_SESSION['user']['id'];
         $response = ['success' => false, 'message' => ''];
         
         // Get active cart
@@ -261,7 +261,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['place_order'])) {
             
             echo "<script>
                 alert('Order placed successfully!');
-                window.location.href = 'studentsOrders.php';
+                window.location.href = 'orders.php';
             </script>";
         } catch (Exception $e) {
             // Rollback transaction on error
@@ -298,8 +298,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['place_order'])) {
           <i class="bi bi-person-circle"></i>
         </div>
         <div class="user-text">
-          <h4><?php echo $_SESSION['student']['firstname']; ?></h4>
-          <p><?php echo ucfirst($_SESSION['student']['type']); ?> Student</p>
+          <h4><?php echo $_SESSION['user']['firstname']; ?></h4>
+          <p><?php echo ucfirst($_SESSION['user']['type']); ?> Student</p>
         </div>
       </div>
       <div class="cart-indicator">
@@ -370,7 +370,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['place_order'])) {
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <form id="paymentForm" action="" method="POST">
-          <input type="hidden" name="uid" value="<?php echo $_SESSION['student']['id']; ?>">
+          <input type="hidden" name="uid" value="<?php echo $_SESSION['user']['id']; ?>">
           <input type="hidden" name="place_order" value="1">
           <div class="modal-body">
             <div id="checkoutItems">
@@ -448,7 +448,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['place_order'])) {
                     updateCartCount();
                     
                     // Optionally redirect to orders page
-                    // window.location.href = 'studentsOrders.php';
+                    // window.location.href = 'orders.php';
                     
                 } else {
                     alert('Error: ' + response.message);

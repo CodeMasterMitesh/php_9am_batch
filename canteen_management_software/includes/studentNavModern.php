@@ -22,8 +22,8 @@
         <i class="bi bi-person-circle"></i>
       </div>
       <div class="user-info-text">
-        <div class="user-name"><?php echo $_SESSION['student']['firstname'] . ' ' . $_SESSION['student']['lastname']; ?></div>
-        <div class="user-role"><?php echo ucfirst($_SESSION['student']['type']); ?> Student</div>
+        <div class="user-name"><?php echo $_SESSION['user']['firstname'] . ' ' . $_SESSION['user']['lastname']; ?></div>
+        <div class="user-role"><?php echo ucfirst($_SESSION['user']['type']); ?> Student</div>
       </div>
     </div>
 
@@ -65,7 +65,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link active" href="studentsOrders.php">
+        <a class="nav-link active" href="orders.php">
           <i class="bi bi-cart-check"></i>
           <span>My Orders</span>
           <span class="nav-badge" id="ordersBadge">0</span>

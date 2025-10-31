@@ -93,14 +93,14 @@
     <div class="header">
       <div class="header-title">
         <h1>Dashboard Overview</h1>
-        <p>Welcome back, <?php echo $_SESSION['admin']['firstname']; ?>! Here's what's happening today.</p>
+        <p>Welcome back, <?php echo $_SESSION['user']['firstname']; ?>! Here's what's happening today.</p>
       </div>
       <div class="user-profile">
         <div class="dropdown">
           <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
             <i class="bi bi-person-circle fs-3 me-2"></i>
             <div>
-              <strong><?php echo $_SESSION['admin']['firstname']; ?></strong>
+              <strong><?php echo $_SESSION['user']['firstname']; ?></strong>
               <div class="small text-muted">Administrator</div>
             </div>
           </a>

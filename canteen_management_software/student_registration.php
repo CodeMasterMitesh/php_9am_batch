@@ -20,10 +20,12 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
     $type = "student";
     $username  = $_POST['username'];
     $password  = $_POST['password'];
+
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
     // exit;
 
     $sql = "INSERT INTO users(`firstname`,`lastname`,`email`,`address`,`mobile`,`education`,`hobby`,`type`,`username`,`password`) 
-    VALUES('$firstName','$lastname','$email','$address','$mobile','$education','$hobby','$type','$username','$password')";
+    VALUES('$firstName','$lastname','$email','$address','$mobile','$education','$hobby','$type','$username','$hashed_password')";
 
     // echo $sql;
     // exit;
